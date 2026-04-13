@@ -111,8 +111,9 @@ def parse_data_questions_html(filename):
         if html_content:
             if html_content[0]:
                 email_match = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', html_content[0])
-                email = re.sub(r'.*=', '', html_content[0])
-            html_content = html_content[1:]
+                if email_match:
+                    email = re.sub(r'.*=', '', html_content[0])
+                    html_content = html_content[1:]
         parsed_data = parse_quiz_review(html_content)
 
         a = json.dumps(parsed_data, indent=4, ensure_ascii=False)
@@ -387,14 +388,10 @@ def create_all_report(is_only_new_report=True):
         all_report_names.append(filename_path.name)
 
     if is_only_new_report:
-        all_file_filtered = [f for f in all_file if f'r_{f.name}' not in all_report_names]
+        all_file_filtered = [f for f in all_file if not any(f.name in report for report in all_report_names)] or []
     else:
-        all_file_filtered = [f for f in all_file if f'r_{f.name}']
+        all_file_filtered = all_file
 
     for filename_path in all_file_filtered:
-        print(filename_path)
+        print(f'\n{filename_path}')
         generate_report(filename=Path(filename_path), all_questions=all_questions)
-
-
-if __name__ == '__main__':
-    create_all_report(is_only_new_report=True)

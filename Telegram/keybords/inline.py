@@ -34,7 +34,7 @@ k_admin_menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='? Версия бота?', callback_data=CallBackData.SHOW_VERSION)],
     [InlineKeyboardButton(text='📄 Скачать Логи Программные 📄', callback_data=CallBackData.GET_LOG_PROGRAM), ],
     [InlineKeyboardButton(text='🆕 Создай сертификаты 🆕', callback_data=CallBackData.CREATE_CERT), ],
-    [InlineKeyboardButton(text='! Скачай отчеты на сервер', callback_data=CallBackData.DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK)],
+    [InlineKeyboardButton(text='⏬ Скачай отчеты moodle и создай отчеты \n(без загрузки)⏬', callback_data=CallBackData.DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK)],
     button_return_main_menu(),
 ])
 
