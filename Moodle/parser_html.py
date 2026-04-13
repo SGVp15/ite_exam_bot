@@ -332,6 +332,7 @@ def generate_report(filename: Path, all_questions):
         return
     questions_user_json = data['questions']
     test_info = data['test_info']
+    exam = data['test_info'].get('test_name').replace(' ТЕСТ', '')
     if email:
         test_info['email'] = email
 
@@ -342,18 +343,39 @@ def generate_report(filename: Path, all_questions):
             ans_a=q.get('answers')[0],
             ans_b=q.get('answers')[1],
             ans_c=q.get('answers')[2],
-            ans_d=q.get('answers')[3])
-
+            ans_d=q.get('answers')[3],
+        )
         c.status = q.get('status')
+        c.exam = exam
         questions_user.append(c)
 
     if len(questions_user_json) != len(questions_user):
         return 'len(questions_user_json) != len(questions_user)'
 
-    all_questions = [q for q in all_questions if q in questions_user]
-    not_questions = [q for q in all_questions if q not in questions_user]
+    # all_questions = [q for q in all_questions if q in questions_user]
+
+    all_questions_filtered = []
+    not_questions = []
+    for q in questions_user:
+        # Проверяем, содержится ли текущий вопрос в списке разрешенных (user_questions)
+        if q in all_questions:
+            # Если совпадение найдено, добавляем его в новый список
+            all_questions_filtered.append(q)
+        else:
+            not_questions.append(q)
+            for t_q in all_questions:
+                if t_q.text_question == q.text_question:
+                    print('t_q.text_question == q.text_question')
+            print('a')
+            if q in all_questions:
+                pass
+    # Перезаписываем исходную переменную (как в вашем примере)
+    all_questions = all_questions_filtered
+
     if not_questions:
         print(f'NO_questions\t{len(not_questions)}')
+        return None
+
     answer_category = {}
     all_category = {}
     for q in all_questions:
@@ -392,11 +414,12 @@ def create_all_report(is_only_new_report=True):
     all_report_names = [filename_path.name for filename_path in dir_report_path.glob('*.html')] or []
 
     if is_only_new_report:
-        all_file_filtered = [f for f in all_file if not any(f'_{f.name}' in report for report in all_report_names)] or []
+        all_file_filtered = [f for f in all_file if
+                             not any(f'_{f.name}' in report for report in all_report_names)] or []
     else:
         all_file_filtered = all_file
 
     all_questions = get_all_questions_from_xlsx()
-    for filename_path in all_file_filtered:
-        print(f'\n{filename_path}')
-        generate_report(filename=Path(filename_path), all_questions=all_questions)
+    for file in all_file_filtered:
+        print(f'\n{file}')
+        generate_report(filename=Path(file), all_questions=all_questions)
