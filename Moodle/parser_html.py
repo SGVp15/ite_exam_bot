@@ -370,13 +370,12 @@ def generate_report(filename: Path, all_questions):
     # all_questions = all_questions_filtered
 
     _q: Question
-    all_text_question = [q.text_question for q in all_questions if exam.lower() == q.exam.lower()]
+    # all_text_question = [q.text_question for q in all_questions if exam.lower() == q.exam.lower()]
     if not_questions:
-        for _q in not_questions:
-            for i,q in enumerate(all_questions):
-                if _q.text_question == q.text_question:
-                    _q == q
-
+        # for _q in not_questions:
+        #     for i,q in enumerate(all_questions):
+        #         if _q.text_question == q.text_question:
+        #             _q == q
         print(f'!!! not_questions !!! {len(not_questions)}\n\n')
         return None
 
