@@ -1,5 +1,4 @@
 import json
-import os
 import re
 from pathlib import Path
 from pprint import pprint
@@ -9,7 +8,6 @@ from bs4 import BeautifulSoup
 
 from EXCEL.excel_reader import get_all_questions_from_excel_file
 from Question import Question
-from Utils.utils import get_all_files_from_pattern
 from .config import QUESTION_INPUT_DIR_XLSX, DIR_HTML_DOWNLOAD, DIR_REPORTS
 
 
@@ -109,11 +107,15 @@ def parse_data_questions_html(filename):
         with open(filename, 'r', encoding='utf-8') as f:
             html_content = f.read()
         if html_content:
-            if html_content[0]:
-                email_match = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', html_content[0])
-                if email_match:
-                    email = re.sub(r'.*=', '', html_content[0])
-                    html_content = html_content[1:]
+            f_line = html_content.split('\n')
+            if f_line:
+                f_line = f_line[0]
+                parrent = re.findall(r"""user_email\=['"].*['"]""", f_line)
+                if parrent:
+                    parrent = parrent[0]
+                    email = re.findall(r"""user_email\=['"](.*)['"]""", parrent)[0]
+                    html_content = re.sub(parrent, '', html_content).strip()
+
         parsed_data = parse_quiz_review(html_content)
 
         a = json.dumps(parsed_data, indent=4, ensure_ascii=False)
@@ -121,8 +123,10 @@ def parse_data_questions_html(filename):
         return email, python_object
     except FileNotFoundError:
         print("Ошибка: Файл не найден.")
+        return '', None
     except Exception as e:
         print(f"Произошла ошибка при парсинге: {e}")
+        return '', None
 
 
 def create_html_page_report(test_info: dict, all_category: dict, answer_category: dict, filename="quiz_report.html"):
@@ -260,6 +264,7 @@ def create_html_page_report(test_info: dict, all_category: dict, answer_category
         <h2>Общая информация</h2>
         <div class="summary-box">
             <p><strong>Пользователь:</strong> {test_info.get('user', 'Н/Д')}</p>
+            <p><strong>Email:</strong> {test_info.get('email', 'Н/Д')}</p>
             <p><strong>Начало экзамена:</strong> {test_info.get('Тест начат', 'Н/Д')}</p>
             <p><strong>Завершение экзамена:</strong> {test_info.get('Завершен', 'Н/Д')}</p>
             <p><strong>Проходной балл:</strong> <span class="grade-score"> 21</span></p>
@@ -295,7 +300,8 @@ def create_html_page_report(test_info: dict, all_category: dict, answer_category
 def clean_test_infp(data):
     # Очистка и нормализация текста
     for key, value in data.items():
-        data[key] = re.sub(r'\s+', ' ', value).strip()
+        if isinstance(data[key], str):
+            data[key] = re.sub(r'\s+', ' ', value).strip()
     try:
         data['Оценка'] = re.sub(r',\d+', '', data['Оценка'])
     except KeyError:
@@ -307,10 +313,10 @@ def clean_test_infp(data):
     return data
 
 
-def get_all_questions_from_xlsx():
+def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
     exams_name_path = {}
-    for file in get_all_files_from_pattern(QUESTION_INPUT_DIR_XLSX, '.xlsx'):
-        exam_name = re.sub(r'.xlsx$', '', os.path.basename(file))
+    for file in dir.glob('*.xlsx'):
+        exam_name = re.sub(r'.xlsx$', '', file.name)
         exams_name_path[exam_name] = file
 
     all_questions = []
@@ -378,20 +384,15 @@ def generate_report(filename: Path, all_questions):
 def create_all_report(is_only_new_report=True):
     dir_path = DIR_HTML_DOWNLOAD
     dir_report_path = DIR_REPORTS
-    all_file = []
-    all_report_names = []
-    all_questions = get_all_questions_from_xlsx()
-
-    for filename_path in dir_path.glob('*.html'):
-        all_file.append(filename_path)
-    for filename_path in dir_report_path.glob('*.html'):
-        all_report_names.append(filename_path.name)
+    all_file = [filename_path for filename_path in dir_path.glob('*.html')] or []
+    all_report_names = [filename_path.name for filename_path in dir_report_path.glob('*.html')] or []
 
     if is_only_new_report:
         all_file_filtered = [f for f in all_file if not any(f.name in report for report in all_report_names)] or []
     else:
         all_file_filtered = all_file
 
+    all_questions = get_all_questions_from_xlsx()
     for filename_path in all_file_filtered:
         print(f'\n{filename_path}')
         generate_report(filename=Path(filename_path), all_questions=all_questions)

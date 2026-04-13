@@ -18,7 +18,7 @@ DIR_HTML_DOWNLOAD = DIR_BASE / 'DOWNLOAD_Moodle'
 DIR_HTML_DOWNLOAD.mkdir(exist_ok=True, parents=True)
 DIR_REPORTS = DIR_BASE / 'Результаты HTML'
 DIR_REPORTS.mkdir(exist_ok=True, parents=True)
-QUESTION_INPUT_DIR_XLSX = Path('./data', 'questions_xlsx')
+QUESTION_INPUT_DIR_XLSX = DIR_BASE / 'questions_xlsx'
 QUESTION_INPUT_DIR_XLSX.mkdir(exist_ok=True, parents=True)
 
 if not LOGIN_MOODLE:
