@@ -22,8 +22,16 @@ def get_contact_from_cert_excel(filename=FILE_XLSX) -> list[CertContact]:
         try:
             cert_contact = CertContact()
 
-            (num, date, abr_exam, ru_last_name, ru_first_name, eng_last_name, eng_first_name, email,
-             exam_ru) = clean_row[:9]
+            (num,
+             date,
+             abr_exam,
+             ru_last_name,
+             ru_first_name,
+             eng_last_name,
+             eng_first_name,
+             email,
+             can_create_cert,
+             exam_ru,) = clean_row[:10]
 
             cert_contact.number = int(num)
             cert_contact.date_exam = dateparser.parse(date, settings=date_settings)
@@ -38,14 +46,8 @@ def get_contact_from_cert_excel(filename=FILE_XLSX) -> list[CertContact]:
             cert_contact.eng_first_name = eng_first_name
             cert_contact.email = email
             cert_contact.exam_ru = exam_ru
+            cert_contact.can_create_cert = can_create_cert
 
-            # Безопасное получение статуса создания (столбец K / индекс 10)
-            try:
-                cert_contact.can_create_cert = clean_row[10] if len(clean_row) > 10 else 0
-            except (ValueError, IndexError):
-                cert_contact.can_create_cert = 0
-
-            # Логика путей и файлов
             cert_contact.create_path_file()
 
             cert_contacts.append(cert_contact)
