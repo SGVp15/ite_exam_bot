@@ -330,12 +330,13 @@ def generate_report(filename: Path, all_questions):
     email, data = parse_data_questions_html(filename=filename)
     if not data:
         return
-    q_my = data['questions']
+    questions_user_json = data['questions']
     test_info = data['test_info']
     if email:
         test_info['email'] = email
-    quests = []
-    for i, q in enumerate(q_my):
+
+    questions_user = []
+    for i, q in enumerate(questions_user_json):
         c = Question(
             text_question=q.get('question_text'),
             ans_a=q.get('answers')[0],
@@ -344,10 +345,13 @@ def generate_report(filename: Path, all_questions):
             ans_d=q.get('answers')[3])
 
         c.status = q.get('status')
-        # print(q.get('number'), c.status , q.get('status'))
-        quests.append(c)
-    all_questions = [q for q in all_questions if q in quests]
-    not_questions = [q for q in all_questions if q not in quests]
+        questions_user.append(c)
+
+    if len(questions_user_json) != len(questions_user):
+        return 'len(questions_user_json) != len(questions_user)'
+
+    all_questions = [q for q in all_questions if q in questions_user]
+    not_questions = [q for q in all_questions if q not in questions_user]
     if not_questions:
         print(f'NO_questions\t{len(not_questions)}')
     answer_category = {}
@@ -356,7 +360,7 @@ def generate_report(filename: Path, all_questions):
         answer_category[q.category] = 0
         all_category[q.category] = 0
 
-    for i, q in enumerate(quests):
+    for i, q in enumerate(questions_user):
         q: Question
         for q_all in all_questions:
             q_all: Question
@@ -388,7 +392,7 @@ def create_all_report(is_only_new_report=True):
     all_report_names = [filename_path.name for filename_path in dir_report_path.glob('*.html')] or []
 
     if is_only_new_report:
-        all_file_filtered = [f for f in all_file if not any(f.name in report for report in all_report_names)] or []
+        all_file_filtered = [f for f in all_file if not any(f'_{f.name}' in report for report in all_report_names)] or []
     else:
         all_file_filtered = all_file
 
