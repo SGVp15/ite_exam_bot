@@ -327,6 +327,7 @@ def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
 
 
 def generate_report(filename: Path, all_questions):
+    all_questions = all_questions[:]
     email, data = parse_data_questions_html(filename=filename)
     if not data:
         return
@@ -352,28 +353,31 @@ def generate_report(filename: Path, all_questions):
     if len(questions_user_json) != len(questions_user):
         return 'len(questions_user_json) != len(questions_user)'
 
-    # all_questions = [q for q in all_questions if q in questions_user]
+    all_questions = [q for q in all_questions if exam.lower() == q.exam.lower()]
 
     all_questions_filtered = []
     not_questions = []
     for q in questions_user:
         # Проверяем, содержится ли текущий вопрос в списке разрешенных (user_questions)
+        if q.text_question == 'Что из перечисленного называется продуктом?':
+            pass
         if q in all_questions:
             # Если совпадение найдено, добавляем его в новый список
             all_questions_filtered.append(q)
         else:
             not_questions.append(q)
-            for t_q in all_questions:
-                if t_q.text_question == q.text_question:
-                    print('t_q.text_question == q.text_question')
-            print('a')
-            if q in all_questions:
-                pass
-    # Перезаписываем исходную переменную (как в вашем примере)
-    all_questions = all_questions_filtered
 
+    # all_questions = all_questions_filtered
+
+    _q: Question
+    all_text_question = [q.text_question for q in all_questions if exam.lower() == q.exam.lower()]
     if not_questions:
-        print(f'NO_questions\t{len(not_questions)}')
+        for _q in not_questions:
+            for i,q in enumerate(all_questions):
+                if _q.text_question == q.text_question:
+                    _q == q
+
+        print(f'!!! not_questions !!! {len(not_questions)}\n\n')
         return None
 
     answer_category = {}
