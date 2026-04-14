@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по тесту: {{ test_name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+         }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+         }
+        h1 {
+            color: #0056b3;
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+         }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 5px;
+         }
+        .summary-box {
+            background: #e9f7ff;
+            border: 1px solid #b3e0ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+         }
+        .summary-box p {
+            margin: 5px 0;
+            line-height: 1.5;
+         }
+        .summary-box strong {
+            color: #0056b3;
+            display: inline-block;
+            width: 150px;
+         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+         }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+         }
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+         }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+         }
+        .numeric {
+            text-align: center;
+            width: 80px;
+         }
+        .grade-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #444444;
+         }
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            height: 25px;
+            overflow: hidden;
+            width: 150px;
+            margin: 0 auto;
+         }
+        .progress-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9em;
+            transition: width 0.5s ease-in-out;
+         }
+        .pass {
+            background-color: #28a745;
+         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Отчет о прохождении экзамена: {{ test_name }}</h1>
+        <h2>Общая информация</h2>
+        <div class="summary-box">
+            <p><strong>Пользователь:</strong> {{ user }}</p>
+            {% if email %}<p><strong>Email:</strong> {{ email }}</p>{% endif %}
+            {% if time_start %}<p><strong>Начало экзамена:</strong> {{ time_start }}</p>{% endif %}
+            {% if time_end %}<p><strong>Завершение экзамена:</strong> {{ time_end }}</p>{% endif %}
+            <p><strong>Проходной балл:</strong> <span class="grade-score"> 21</span></p>
+            <p><strong>Итоговая оценка:</strong> <span class="grade-score"> {{ all_category_correct }} / {{ all_category_total }}</span></p>
+        </div>
+
+        <h2>Результаты по категориям</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Категория</th>
+                    <th class="numeric">Верно</th>
+                    <th class="numeric">Всего</th>
+                    <th class="numeric"></th>
+                </tr>
+            </thead>
+            <tbody>
+                 {{ table_rows }}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
