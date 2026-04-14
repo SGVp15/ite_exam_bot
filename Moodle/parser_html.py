@@ -7,6 +7,7 @@ import dateparser
 from bs4 import BeautifulSoup
 
 from EXCEL.excel_reader import get_all_questions_from_excel_file
+from My_jinja import MyJinja
 from Question import Question
 from .config import QUESTION_INPUT_DIR_XLSX, DIR_HTML_DOWNLOAD, DIR_REPORTS
 
@@ -159,135 +160,16 @@ def create_html_page_report(test_info: dict, all_category: dict, answer_category
         </tr>
         """
 
-    # --- 2. HTML-шаблон ---
-    html_content = f"""<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Отчет по тесту: {test_info.get('test_name', 'Без названия')}</title>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }}
-        .container {{
-            max-width: 900px;
-            margin: auto;
-            background: #fff;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }}
-        h1 {{
-            color: #0056b3;
-            border-bottom: 3px solid #0056b3;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }}
-        h2 {{
-            color: #555;
-            margin-top: 30px;
-            border-bottom: 1px dashed #ccc;
-            padding-bottom: 5px;
-        }}
-        .summary-box {{
-            background: #e9f7ff;
-            border: 1px solid #b3e0ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }}
-        .summary-box p {{
-            margin: 5px 0;
-            line-height: 1.5;
-        }}
-        .summary-box strong {{
-            color: #0056b3;
-            display: inline-block;
-            width: 150px;
-        }}
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }}
-        th, td {{
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }}
-        th {{
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-        }}
-        tr:nth-child(even) {{
-            background-color: #f2f2f2;
-        }}
-        .numeric {{
-            text-align: center;
-            width: 80px;
-        }}
-        .grade-score {{
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #444444;
-        }}
-        .progress-bar {{
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            height: 25px;
-            overflow: hidden;
-            width: 150px;
-            margin: 0 auto;
-        }}
-        .progress-fill {{
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.9em;
-            transition: width 0.5s ease-in-out;
-        }}
-        .pass {{
-            background-color: #28a745; 
-        }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Отчет о прохождении экзамена: {test_info.get('test_name', 'Н/Д')}</h1>
-        <h2>Общая информация</h2>
-        <div class="summary-box">
-            <p><strong>Пользователь:</strong> {test_info.get('user', 'Н/Д')}</p>
-            <p><strong>Email:</strong> {test_info.get('email', 'Н/Д')}</p>
-            <p><strong>Начало экзамена:</strong> {test_info.get('Тест начат', 'Н/Д')}</p>
-            <p><strong>Завершение экзамена:</strong> {test_info.get('Завершен', 'Н/Д')}</p>
-            <p><strong>Проходной балл:</strong> <span class="grade-score"> 21</span></p>
-            <p><strong>Итоговая оценка:</strong> <span class="grade-score"> {all_category_correct} / {all_category_total}</span></p>
-        </div>
-
-        <h2>Результаты по категориям</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Категория</th>
-                    <th class="numeric">Верно</th>
-                    <th class="numeric">Всего</th>
-                    <th class="numeric"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {table_rows}
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>"""
+    html_content = MyJinja(template_folder='./Moodle/template_html', template_file='report.html').template_file.render(
+        user=test_info.get('user', 'Н/Д'),
+        all_category_correct=all_category_correct,
+        time_end=test_info.get('Завершен', 'Н/Д'),
+        time_start=test_info.get('Тест начат', 'Н/Д'),
+        email=test_info.get('email', 'Н/Д'),
+        table_rows=table_rows,
+        test_name=test_info.get('test_name', 'Н/Д'),
+        all_category_total=all_category_total,
+    )
 
     try:
         with open(filename, 'w', encoding='utf-8') as f:
@@ -358,24 +240,12 @@ def generate_report(filename: Path, all_questions):
     all_questions_filtered = []
     not_questions = []
     for q in questions_user:
-        # Проверяем, содержится ли текущий вопрос в списке разрешенных (user_questions)
-        if q.text_question == 'Что из перечисленного называется продуктом?':
-            pass
         if q in all_questions:
-            # Если совпадение найдено, добавляем его в новый список
             all_questions_filtered.append(q)
         else:
             not_questions.append(q)
 
-    # all_questions = all_questions_filtered
-
-    _q: Question
-    # all_text_question = [q.text_question for q in all_questions if exam.lower() == q.exam.lower()]
     if not_questions:
-        # for _q in not_questions:
-        #     for i,q in enumerate(all_questions):
-        #         if _q.text_question == q.text_question:
-        #             _q == q
         print(f'!!! not_questions !!! {len(not_questions)}\n\n')
         return None
 
@@ -407,7 +277,8 @@ def generate_report(filename: Path, all_questions):
         print(f'{k}\t{answer_category[k]}\t{all_category[k]}')
 
     report_filename = DIR_REPORTS / f'r_{date_start.strftime('%Y.%m.%d')}_{test_info['test_name']}_{test_info['user']}_{filename.name}'
-    create_html_page_report(test_info, all_category, answer_category, filename=report_filename)
+    create_html_page_report(test_info, all_category, answer_category,
+                            filename=report_filename)
 
 
 def create_all_report(is_only_new_report=True):

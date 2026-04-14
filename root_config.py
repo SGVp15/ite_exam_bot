@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dotenv import dotenv_values, find_dotenv
 
-VERSION = '1.5.2'
+VERSION = '1.5.3'
 
 config = dotenv_values(find_dotenv())
 
