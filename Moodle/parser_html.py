@@ -161,13 +161,13 @@ def create_html_page_report(test_info: dict, all_category: dict, answer_category
         """
 
     html_content = MyJinja(template_folder='./Moodle/template_html', template_file='report.html').template_file.render(
-        user=test_info.get('user', 'Н/Д'),
-        all_category_correct=all_category_correct,
-        time_end=test_info.get('Завершен', 'Н/Д'),
-        time_start=test_info.get('Тест начат', 'Н/Д'),
-        email=test_info.get('email', 'Н/Д'),
+        user=test_info.get('user', ''),
+        time_end=test_info.get('Завершен', ''),
+        time_start=test_info.get('Тест начат', ''),
+        email=test_info.get('email', ''),
         table_rows=table_rows,
-        test_name=test_info.get('test_name', 'Н/Д'),
+        test_name=test_info.get('test_name', ''),
+        all_category_correct=all_category_correct,
         all_category_total=all_category_total,
     )
 
