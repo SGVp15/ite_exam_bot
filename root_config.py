@@ -17,7 +17,6 @@ DIR_DATA = Path('./data').resolve()
 DIR_DATA.mkdir(parents=True, exist_ok=True)
 LOG_FILE = Path(DIR_DATA / 'log.txt')
 
-
 #  ====================================================================================================================
 #  -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL
 
@@ -28,18 +27,18 @@ PAGE_NAME: str = 'Экзамены'
 
 TEMPLATE_SERVER_FILE_XLSX = "//192.168.20.100/Administrative server/РАБОТА АДМИНИСТРАТОРА/ОРГАНИЗАЦИЯ IT ЭКЗАМЕНОВ/ЭКЗАМЕНЫ ЦИФРОВОЙ ПУТЬ/Регистрация_На_Экзамен.xlsx"
 
-LastName_column: str = 'A'
-FirstName_column: str = 'B'
-LastNameEng_column: str = 'C'
-FirstNameEng_column: str = 'D'
-Email_column: str = 'E'
-Password_column: str = 'F'
-Exam_column: str = 'G'
-Date_column: str = 'H'
-Hour_column: str = 'I'
-Minute_column: str = 'J'
-Proctor_column: str = 'K'
-Certificate_insurance_column: str = 'L'
+# LastName_column: str = 'A'
+# FirstName_column: str = 'B'
+# LastNameEng_column: str = 'C'
+# FirstNameEng_column: str = 'D'
+# Email_column: str = 'E'
+# Password_column: str = 'F'
+# Exam_column: str = 'G'
+# Date_column: str = 'H'
+# Hour_column: str = 'I'
+# Minute_column: str = 'J'
+# Online_column: str = 'K'
+# Certificate_insurance_column: str = 'L'
 
 #  == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL
 #  ====================================================================================================================
@@ -62,7 +61,7 @@ ALLOWED_EXAMS: list = [
     'RCVC',
     'RISKC',
     'SCMC',
-    'SOA4C',
+    'SOAC',
     'SYSAC',
     'ITSMC',
 ]

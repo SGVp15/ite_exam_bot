@@ -98,7 +98,7 @@ class ITEXPERT_API:
         url = self._get_full_url(EXAM_ENDPOINT)
 
         exam_type = "Offline"
-        if contact.proctor:
+        if contact.online:
             exam_type = "Online"
 
         exam_data = {

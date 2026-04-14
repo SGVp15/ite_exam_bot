@@ -31,7 +31,7 @@ class Contact:
         self.remove_at: str | None = None
         self.deadline: str | None = None
         self.scheduled_at: str | None = None
-        self.proctor: str | None = None
+        self.online: str | None = None
         self.subject: str | None = None
         self.url_proctor: str | None = None
 
@@ -128,7 +128,7 @@ class Contact:
             self.password = f'{self.username}_P{random.randint(1000, 9999):04d}'
 
         self.subject = f'{self.date_exam.strftime(self.pattern_time)}_{self.username}_' \
-                       f'{self.exam}_proctor-{self.proctor}'
+                       f'{self.exam}_online-{self.online}'
 
         self.identifier = to_md5(f'{self.date_exam.strftime(self.pattern_time)}_{self.username}_{self.exam}')
         return True
@@ -147,7 +147,7 @@ class Contact:
             f"username={self.username}\t"
             f"password={self.password}\t"
             f"exam={self.exam}\t"
-            f"proctor={self.proctor}\t"
+            f"online={self.online}\t"
             f"url_proctor={self.url_proctor}\t"
             f"date_exam={self.date_exam}\t"
             f"date_exam_connect={self.date_exam_connect}\t"

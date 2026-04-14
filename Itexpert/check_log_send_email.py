@@ -51,7 +51,7 @@ async def check_log_and_send_email_to_manager():
     if contact_for_email_:
         text = ''
         for c in contact_for_email_:
-            if c.proctor:
+            if c.online:
                 text += 'Online '
             else:
                 text += 'Offline '

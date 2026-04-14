@@ -44,7 +44,7 @@ async def registration(contacts: [Contact]) -> str:
         moodle_api.process_user_and_enrollment(contact=contact)
 
     # -------------- ProctorEDU --------------
-    contacts_proctor = [c for c in new_contacts if c.proctor]
+    contacts_proctor = [c for c in new_contacts if c.online]
     if contacts_proctor:
         # await create_csv_files(contacts_proctor)
         #
@@ -54,7 +54,7 @@ async def registration(contacts: [Contact]) -> str:
 
         # Get link ProctorEDU
         for contact in contacts_proctor:
-            if contact.proctor:
+            if contact.online:
                 contact.url_proctor = ''
                 # contact.url_proctor = await drive.get_url_session(contact.subject)
                 generate_new_proctoring_link_by_contact(contact)
@@ -66,14 +66,14 @@ async def registration(contacts: [Contact]) -> str:
     # -------------- SEND EMAIL --------------
     log.info(f'[ start ] SEND EMAIL ')
     for contact in new_contacts:
-        if contact.proctor:
+        if contact.online:
             log.info(f'MyJinja start template_email_registration_exam_online')
             text = MyJinja(template_file=template_email_registration_exam_online).render_document(user=contact)
         else:
             log.info(f'MyJinja start template_email_registration_exam_online')
             text = MyJinja(template_file=template_email_registration_exam_offline).render_document(user=contact)
         subject = f'Вы зарегистрированы на экзамен {contact.exam} {contact.date_exam}'
-        if contact.proctor and not contact.url_proctor:
+        if contact.online and not contact.url_proctor:
             out_str += f'[Error] URL {contact}\n'
             log.error(f'[Error] URL {contact}')
             continue
@@ -113,13 +113,13 @@ async def send_new_link_proctoredu(contacts: [Contact] = []) -> str:
     all_contacts = new_contacts + old_contacts
 
     # -------------- ProctorEDU --------------
-    contacts_proctor = [c for c in all_contacts if c.proctor]
+    contacts_proctor = [c for c in all_contacts if c.online]
     if contacts_proctor:
         # drive = ProctorEduSelenium()
         # await drive.authorization()
         # Get link ProctorEDU
         for contact in contacts_proctor:
-            if contact.proctor:
+            if contact.online:
                 contact.url_proctor = ''
                 # contact.url_proctor = await drive.get_url_session(contact.subject)
                 generate_new_proctoring_link_by_contact(contact)
@@ -134,7 +134,7 @@ async def send_new_link_proctoredu(contacts: [Contact] = []) -> str:
         log.info(f'MyJinja start template_email_new_link_proctoredu')
         email_html = MyJinja(template_file=template_email_new_link_for_old_users).render_document(user=contact)
         subject = f'Новая ссылка на экзамен {contact.exam} {contact.date_exam}'
-        if contact.proctor and not contact.url_proctor:
+        if contact.online and not contact.url_proctor:
             out_str += f'[Error] URL {contact}\n'
             log.error(f'[Error] URL {contact}')
             continue

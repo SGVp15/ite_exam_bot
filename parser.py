@@ -50,7 +50,7 @@ def get_contact_from_array(data_list) -> list[Contact]:
         # Date_column: str = 'H'	7
         # Hour_column: str = 'I'	8
         # Minute_column: str = 'J'	9
-        # Proctor_column: str = 'K'	10
+        # Online_column: str = 'K'	10
         # Cert_save: str = 'L'	11
         # Email_CC_column: str = 'M'	12
 
@@ -71,7 +71,7 @@ def get_contact_from_array(data_list) -> list[Contact]:
         if not contact.exam:
             continue
 
-        contact.proctor = data[10]
+        contact.online = data[10]
         contact.date_exam = dateparser.parse(
             f'{data[7].strip()} {str(data[8]).strip()}:{str(data[9]).strip()}',
             settings={'DATE_ORDER': 'DMY'}

@@ -90,7 +90,7 @@ async def show_exam_now(callback_query: types.callback_query):
 
         for c in contacts:
             offline = ''
-            if c.proctor in (0, '0', False, None):
+            if c.online in (0, '0', False, None):
                 offline = 'offline'
 
             rows.append(
@@ -120,7 +120,7 @@ async def show_all_exams(callback_query: types.callback_query):
         rows = []
         for c in contacts:
             offline = ''
-            if c.proctor in (0, '0', False, None):
+            if c.online in (0, '0', False, None):
                 offline = 'offline'
             rows.append(
                 f'{c.date_exam.strftime("%Y.%m.%d %H:%M")} {c.exam} {c.email} {c.ru_last_name} {c.ru_first_name} {offline}')

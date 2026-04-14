@@ -13,7 +13,7 @@ async def create_csv_files(contacts: list[Contact]):
         for contact in contacts:
             CSV_HEADER_SESSION.update({
                 'student.username': contact.username,
-                'members': f'proctor-{contact.proctor}',
+                'members': f'proctor-{contact.online}',
                 'subject': contact.subject,
                 'identifier': contact.identifier,
                 'scheduledAt': contact.scheduled_at,
