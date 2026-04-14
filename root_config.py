@@ -57,11 +57,11 @@ ALLOWED_EXAMS: list = [
     'ITAMC',
     'ITHRC',
     'ITIL4FC',
+    'ITSMC',
     'OPSC',
     'RCVC',
     'RISKC',
     'SCMC',
     'SOAC',
     'SYSAC',
-    'ITSMC',
 ]
