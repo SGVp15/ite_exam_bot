@@ -30,7 +30,7 @@ async def registration(contacts: [Contact]) -> str:
     out_str = ''
     exams = [contact.exam for contact in contacts]
     for exam in exams:
-        if exam not in ALLOWED_EXAMS:
+        if exam.lower() not in (item.lower() for item in ALLOWED_EXAMS):
             return 'Проверьте курс'
 
     contacts_from_log_file = load_contacts_from_log_file(date_start=datetime.datetime.now())
@@ -100,9 +100,11 @@ async def registration(contacts: [Contact]) -> str:
 
 async def send_new_link_proctoredu(contacts: [Contact] = []) -> str:
     out_str = ''
+    if not contacts:
+        return 'No contacts'
     exams = [contact.exam for contact in contacts]
     for exam in exams:
-        if exam not in ALLOWED_EXAMS:
+        if exam.lower() not in (item.lower() for item in ALLOWED_EXAMS):
             return 'Проверьте курс'
     if not contacts:
         contacts = load_contacts_from_log_file(date_start=datetime.datetime.now())
