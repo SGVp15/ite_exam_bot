@@ -9,6 +9,7 @@ import dateparser
 from Itexpert.ite_api import ITEXPERT_API, update_cert_lk, sent_report_and_cert_lk
 from ProctorEDU.selenium_for_proctoredu import ProctorEduSelenium
 
+
 # async def test_proctoredu():
 #     drive = ProctorEduSelenium()
 #     await drive.authorization()
@@ -21,21 +22,38 @@ from ProctorEDU.selenium_for_proctoredu import ProctorEduSelenium
 #     await task1
 
 
+def delete_exams(del_exam: list):
+    ite_api = ITEXPERT_API()
+    for id_exam_delete in del_exam:
+        print(f"\n[4. delete_exam_by_id({id_exam_delete})]")
+        r_delete = ite_api.delete_exam_by_id(id_exam_delete)
+        print("Результат удаления:", r_delete.status_code)
+    print(f"\n[get_exam_by_email({email})]")
+    r_id = ite_api.get_exam_by_email(email)
+    if r_id and r_id.ok:
+        pprint(json.loads(r_id.text))
+    else:
+        print("Не удалось получить экзамен по ID.")
+
+
 if __name__ == '__main__':
     ite_api = ITEXPERT_API()
     all_exam = ite_api.get_list_exams()
+    pprint(all_exam.text)
+    # raise 'end'
 
-    # # Обновить экзамен
-    ite_api.add_exam_in_to_exam_by_id(id=28774, exam_in='21008')
+    # # # Обновить экзамен
+    # ite_api.add_exam_in_to_exam_by_id(id=28774, exam_in='21008')
+
+    email = 'test@test.tt'
+    r_id = ite_api.get_exam_by_email(email)
+
+    # 4. Тестирование удаления экзамена
+    # del_exam = [i for i in range(28850,28862)]
+    del_exam = (28864, 28863)
+    delete_exams(del_exam)
     raise 'end'
-#
-#     # # 4. Тестирование удаления экзамена
-#     # for id_exam_delete in (28562,):
-#     #     time.sleep(1)
-#     #     print(f"\n[4. delete_exam_by_id({id_exam_delete})]")
-#     #     r_delete = ITEXPERT_API().delete_exam_by_id(id_exam_delete)
-#     #     print("Результат удаления:", r_delete.status_code)
-#
+
     # 2. Тестирование получения экзамена по ID
     ids_itsm = []
     exams = [28558,
@@ -90,8 +108,7 @@ if __name__ == '__main__':
              26285,
              ]
 
-
-#
+    #
     for id_exam in [28708, 28499, 26700]:
         print(f"\n[2. get_exam_by_id({id_exam})]")
         r_id = ite_api.get_exam_by_id(id_exam)
@@ -110,6 +127,7 @@ if __name__ == '__main__':
             print("Не удалось получить экзамен по ID.")
         time.sleep(1)
 
+
 #     print(ids_itsm)
 #     #
 #     # # 3. Тестирование создания экзамена
@@ -118,17 +136,7 @@ if __name__ == '__main__':
 #     # if r_create:
 #     #     print("Результат создания:", r_create.status_code)
 #     #
-#     # # 4. Тестирование удаления экзамена
-#     # for id_exam_delete in (28505,28506,28507,28508,28509,28510):
-#     #     print(f"\n[4. delete_exam_by_id({id_exam_delete})]")
-#     #     r_delete = ite_api.delete_exam_by_id(id_exam_delete)
-#     #     print("Результат удаления:", r_delete.status_code)
-#     # print(f"\n[get_exam_by_email({email})]")
-#     # r_id = ite_api.get_exam_by_email(email)
-#     # if r_id and r_id.ok:
-#     #     pprint(json.loads(r_id.text))
-#     # else:
-#     #     print("Не удалось получить экзамен по ID.")
+
 #
 # #
 def main():

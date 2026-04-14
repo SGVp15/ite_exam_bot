@@ -83,18 +83,30 @@ class ITEXPERT_API:
     def get_exam_dict_code_id(self) -> dict:
         r = self.get_list_exams(active=True)
         j = r.json()
-        list_exam = j.get('data')
-        exam_dict_code_id = {}
-        for el in list_exam:
-            exam_dict_code_id[el.get('code')] = el.get('id')
-        exam_dict_code_id['ITIL4FC'] = exam_dict_code_id.get('ITSMC')
+        try:
+            list_exam = j.get('data')
+            exam_dict_code_id = {}
+            for el in list_exam:
+                code = el.get('code')
+                id_val = el.get('id')
+
+                if code and id_val:
+                    k = str(code).lower()
+                    v = str(id_val).lower()
+                    exam_dict_code_id[k] = v
+
+            if 'itsmc' in exam_dict_code_id:
+                exam_dict_code_id['ITIL4FC'] = exam_dict_code_id['itsmc']
+        except (AttributeError, TypeError) as e:
+            print(f"Ошибка при обработке данных: {e}")
+            pass
         return exam_dict_code_id
 
     # --- Методы POST/DELETE ---
 
     def create_exam(self, contact: Contact) -> Optional[requests.Response]:
         """Создает новый экзамен, используя данные из объекта Contact."""
-        id_exam = self.get_exam_dict_code_id().get(contact.exam)
+        id_exam = self.get_exam_dict_code_id().get(contact.exam.lower())
         url = self._get_full_url(EXAM_ENDPOINT)
 
         exam_type = "Offline"
