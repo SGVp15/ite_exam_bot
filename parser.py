@@ -1,3 +1,4 @@
+import re
 import xml.etree.ElementTree as ET
 
 import dateparser
@@ -64,7 +65,8 @@ def get_contact_from_array(data_list) -> list[Contact]:
             settings={'DATE_ORDER': 'DMY'}
         )
         if copy_email:
-            row = str(copy_email).strip().split(' ')
+            copy_email = re.sub(r'[\s,;|]+', ' ', copy_email).strip()
+            row = list(set(str(copy_email).strip().split(' ')))
             contact.email_cc = [w for w in row if '@' in w]
         if contact.normalize():
             contacts.append(contact)
