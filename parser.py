@@ -43,6 +43,8 @@ def get_contact_from_array(data_list) -> list[Contact]:
 
         if not data[0]:
             continue
+        if len(data) < 13:
+            continue
         (exam_date, exam, last_name_rus, first_name_rus, last_name_eng, first_name_eng,
          email, password, hours, minutes, online, insurance_certificate, copy_email) = data[:13]
         if '@' not in email or not exam or not exam_date:
@@ -53,15 +55,9 @@ def get_contact_from_array(data_list) -> list[Contact]:
         contact.ru_first_name = first_name_rus
         contact.eng_last_name = last_name_eng
         contact.eng_first_name = first_name_eng
-
         contact.email = email
-
         contact.password = password
-
         contact.exam = exam
-        if not contact.exam:
-            continue
-
         contact.online = online
         contact.date_exam = dateparser.parse(
             f'{exam_date.strip()} {str(hours).strip()}:{str(minutes).strip()}',
