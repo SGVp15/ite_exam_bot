@@ -38,46 +38,37 @@ def get_all_users(xml: str) -> list[dict]:
 def get_contact_from_array(data_list) -> list[Contact]:
     contacts = []
     for data in data_list:
-        contact = Contact()
-
-        # LastName_column: str = 'A'	0
-        # FirstName_column: str = 'B'	1
-        # LastNameEng_column: str = 'C'	2
-        # FirstNameEng_column: str = 'D'	3
-        # Email_column: str = 'E'	4
-        # Password_column: str = 'F'	5
-        # Exam_column: str = 'G'	6
-        # Date_column: str = 'H'	7
-        # Hour_column: str = 'I'	8
-        # Minute_column: str = 'J'	9
-        # Online_column: str = 'K'	10
-        # Cert_save: str = 'L'	11
-        # Email_CC_column: str = 'M'	12
+        # 'Дата экзамена', 'Экзамен', 'Фамилия рус', 'Имя рус', 'Фамилия англ', 'Имя анг', 'Email', 'Password', 'Часы', 'Минуты', 'Online', 'Страховой сертификат', 'Копия письма'
+        # 'exam_date', 'exam', 'last_name_rus', 'first_name_rus', 'last_name_eng', 'first_name_eng', 'email', 'password', 'hours', 'minutes', 'online', 'insurance_certificate', 'copy_email'
 
         if not data[0]:
             continue
-        contact.ru_last_name = data[0]
-        contact.ru_first_name = data[1]
-        contact.eng_last_name = data[2]
-        contact.eng_first_name = data[3]
-
-        contact.email = data[4]
-        if '@' not in contact.email:
+        (exam_date, exam, last_name_rus, first_name_rus, last_name_eng, first_name_eng,
+         email, password, hours, minutes, online, insurance_certificate, copy_email) = data[:13]
+        if '@' not in email or not exam or not exam_date:
             continue
 
-        contact.password = data[5]
+        contact = Contact()
+        contact.ru_last_name = last_name_rus
+        contact.ru_first_name = first_name_rus
+        contact.eng_last_name = last_name_eng
+        contact.eng_first_name = first_name_eng
 
-        contact.exam = data[6]
+        contact.email = email
+
+        contact.password = password
+
+        contact.exam = exam
         if not contact.exam:
             continue
 
-        contact.online = data[10]
+        contact.online = online
         contact.date_exam = dateparser.parse(
-            f'{data[7].strip()} {str(data[8]).strip()}:{str(data[9]).strip()}',
+            f'{exam_date.strip()} {str(hours).strip()}:{str(minutes).strip()}',
             settings={'DATE_ORDER': 'DMY'}
         )
-        if data[12]:
-            row = str(data[12]).strip().split(' ')
+        if copy_email:
+            row = str(copy_email).strip().split(' ')
             contact.email_cc = [w for w in row if '@' in w]
         if contact.normalize():
             contacts.append(contact)
@@ -88,7 +79,7 @@ def get_contact_from_excel(filename=TEMPLATE_FILE_XLSX):
     sheet_data: dict = read_excel_file(filename=filename, sheet_names=(PAGE_NAME,))
     sheet_data = sheet_data.get(PAGE_NAME)
 
-    contacts: list[Contact] = get_contact_from_array(sheet_data[1:])
+    contacts: list[Contact] = get_contact_from_array(sheet_data)
     if not contacts:
         return None
     return contacts
