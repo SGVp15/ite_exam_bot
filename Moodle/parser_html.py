@@ -277,8 +277,7 @@ def generate_report(filename: Path, all_questions):
         print(f'{k}\t{answer_category[k]}\t{all_category[k]}')
 
     report_filename = DIR_REPORTS / f'r_{date_start.strftime('%Y.%m.%d')}_{test_info['test_name']}_{test_info['user']}_{filename.name}'
-    create_html_page_report(test_info, all_category, answer_category,
-                            filename=report_filename)
+    create_html_page_report(test_info, all_category, answer_category, filename=report_filename)
 
 
 def create_all_report(is_only_new_report=True):

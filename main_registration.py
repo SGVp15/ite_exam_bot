@@ -26,7 +26,8 @@ async def server_file_registration():
     await registration(contacts)
 
 
-async def registration(contacts: [Contact], send_itexpert=True) -> str:
+async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
+    contacts = contacts[:]
     out_str = ''
     exams = [contact.exam for contact in contacts]
     for exam in exams:
@@ -38,30 +39,19 @@ async def registration(contacts: [Contact], send_itexpert=True) -> str:
     new_contacts = [c for c in contacts if c not in contacts_from_log_file and c.date_exam >= datetime.datetime.now()]
     if not new_contacts:
         return 'Проверьте файл. Нет новых пользователей.'
+
     # -------------- Moodle --------------
     moodle_api = MoodleApi()
     for contact in new_contacts:
         moodle_api.process_user_and_enrollment(contact=contact)
 
     # -------------- ProctorEDU --------------
-    contacts_proctor = [c for c in new_contacts if c.online]
-    if contacts_proctor:
-        # await create_csv_files(contacts_proctor)
-        #
-        # drive = ProctorEduSelenium()
-        # await drive.authorization()
-        # await drive.create_users_and_session()
-
-        # Get link ProctorEDU
-        for contact in contacts_proctor:
+    contacts_proctoring = [c for c in new_contacts if c.online]
+    if contacts_proctoring:
+        for contact in contacts_proctoring:
             if contact.online:
                 contact.url_proctor = ''
-                # contact.url_proctor = await drive.get_url_session(contact.subject)
                 generate_new_proctoring_link_by_contact(contact)
-                if contact.url_proctor == '':
-                    log.warning(f"\n\n[error] NOT found URL {contact}\n\n")
-                    contacts.remove(contact)
-        # drive.quit()
 
     # -------------- SEND EMAIL --------------
     log.info(f'[ start ] SEND EMAIL ')
@@ -87,7 +77,7 @@ async def registration(contacts: [Contact], send_itexpert=True) -> str:
             log.info(contact)
 
     # ITEXPERT
-    if send_itexpert:
+    if send_to_itexpert:
         ite_api = ITEXPERT_API()
         for contact in new_contacts:
             ite_api.create_exam(contact)
@@ -99,5 +89,5 @@ async def registration(contacts: [Contact], send_itexpert=True) -> str:
     return out_str
 
 
-async def send_new_link_proctoredu(contacts: [Contact] = []) -> str:
-    return await registration(contacts, send_itexpert=False)
+async def send_new_link_proctoredu(contacts: [Contact]) -> str:
+    return await registration(contacts, send_to_itexpert=False)
