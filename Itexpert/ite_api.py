@@ -125,7 +125,7 @@ class ITEXPERT_API:
             # Proctor
             "exam_type": exam_type,
             # "insurance_certificate": "false",
-            "link": contact.url_proctor,
+            "link": contact.url,
             # "certificate": {
             #     "base64": "base64_encoded_file_content_CERT",
             #     "name": "certificate.pdf",

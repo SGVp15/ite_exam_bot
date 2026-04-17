@@ -17,7 +17,7 @@ def generate_new_proctoring_link_by_contact(contact):
     url = generate_proctoring_link(subject=contact.subject,
                                    nickname=contact.email,
                                    username=contact.username)
-    contact.url_proctor = url
+    contact.url = url
     return url
 
 
@@ -50,7 +50,7 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
     if contacts_proctoring:
         for contact in contacts_proctoring:
             if contact.online:
-                contact.url_proctor = ''
+                contact.url = ''
                 generate_new_proctoring_link_by_contact(contact)
 
     # -------------- SEND EMAIL --------------
@@ -63,7 +63,7 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
             log.info(f'MyJinja start template_email_registration_exam_online')
             text = MyJinja(template_file=template_email_registration_exam_offline).render_document(user=contact)
         subject = f'Вы зарегистрированы на экзамен {contact.exam} {contact.date_exam}'
-        if contact.online and not contact.url_proctor:
+        if contact.online and not contact.url:
             out_str += f'[Error] URL {contact}\n'
             log.error(f'[Error] URL {contact}')
             continue

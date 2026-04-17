@@ -33,7 +33,7 @@ class Contact:
         self.scheduled_at: str | None = None
         self.online: str | None = None
         self.subject: str | None = None
-        self.url_proctor: str | None = None
+        self.url: str | None = None
 
         self.identifier: str | None = None
         self.status = 'Error'
@@ -78,8 +78,8 @@ class Contact:
                     continue
                 setattr(contact, attr_name, result.get(attr_name, ''))
         try:
-            if not contact.url_proctor:
-                contact.url_proctor = result.get('url', '')
+            if not contact.url:
+                contact.url = result.get('url', '')
             if not contact.exam:
                 contact.exam = re.findall(r'_([A-Z0-9]+)_', contact.subject)[0]
         except IndexError:
@@ -148,7 +148,7 @@ class Contact:
             f"password={self.password}\t"
             f"exam={self.exam}\t"
             f"online={self.online}\t"
-            f"url_proctor={self.url_proctor}\t"
+            f"url={self.url}\t"
             f"date_exam={self.date_exam}\t"
             f"date_exam_connect={self.date_exam_connect}\t"
             f"scheduled_at={self.scheduled_at}\t"
