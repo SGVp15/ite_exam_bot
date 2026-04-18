@@ -24,7 +24,7 @@ class Test(TestCase):
         base_path = Path(
             '//192.168.20.100/Administrative server/РАБОТА АДМИНИСТРАТОРА/ОРГАНИЗАЦИЯ IT ЭКЗАМЕНОВ/ЭКЗАМЕНЫ ЦИФРОВОЙ ПУТЬ/Результаты HTML/')
 
-        files = list(base_path.glob('*_79.html'))
+        files = list(base_path.glob('*_80.html'))
 
         for f in files:
             print(f.name)

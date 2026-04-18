@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from EXCEL.excel_reader import get_all_questions_from_excel_file
 from My_jinja import MyJinja
 from Question import Question
+from Utils.translit import replace_ru_char_to_eng_char
 from .config import QUESTION_INPUT_DIR_XLSX, DIR_HTML_DOWNLOAD, DIR_REPORTS
 
 
@@ -236,7 +237,8 @@ def generate_report(filename: Path, all_questions):
     if len(questions_user_json) != len(questions_user):
         return 'len(questions_user_json) != len(questions_user)'
 
-    all_questions = [q for q in all_questions if exam.lower() == q.exam.lower()]
+    all_questions = [q for q in all_questions if
+                     replace_ru_char_to_eng_char(exam.lower()) == replace_ru_char_to_eng_char(q.exam.lower())]
 
     all_questions_filtered = []
     not_questions = []
