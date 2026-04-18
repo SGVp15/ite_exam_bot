@@ -1,3 +1,4 @@
+import asyncio
 import sys
 from pathlib import Path
 from unittest import TestCase
@@ -28,5 +29,9 @@ class Test(TestCase):
         for f in files:
             print(f.name)
             f.unlink(missing_ok=True)
-        create_all_report(is_only_new_report=True)
-        # create_all_report(is_only_new_report=False)
+
+        async def main():
+            await create_all_report(is_only_new_report=True)
+
+        asyncio.run(main())
+
