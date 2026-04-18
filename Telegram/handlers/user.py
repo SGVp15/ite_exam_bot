@@ -50,9 +50,15 @@ async def download_document_handle(message: message):
 async def btn_download_reports_moodle(callback_query: types.callback_query):
     await download_reports_moodle()
     await create_all_report()
-
-    await bot.send_message(text='ok', chat_id=callback_query.from_user.id,
+    await bot.send_message(text='DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK end', chat_id=callback_query.from_user.id,
                            reply_markup=inline_kb_main)
+
+@dp.callback_query(F.data.in_({CallBackData.CREATE_REPORT}))
+async def btn_create_report(callback_query: types.callback_query):
+    await create_all_report()
+    await bot.send_message(text='DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK end', chat_id=callback_query.from_user.id,
+                           reply_markup=inline_kb_main)
+
 
 
 @dp.callback_query(F.data.in_({CallBackData.SENT_REPORT_AND_CERT_LK}))

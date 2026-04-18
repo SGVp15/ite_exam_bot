@@ -297,4 +297,4 @@ async def create_all_report(is_only_new_report=True):
     for file in all_file_filtered:
         print(f'\n{file}')
         generate_report(filename=Path(file), all_questions=all_questions)
-        await sleep(1)
+        await sleep(0.5)
