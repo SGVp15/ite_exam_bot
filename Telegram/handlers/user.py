@@ -56,7 +56,7 @@ async def btn_download_reports_moodle(callback_query: types.callback_query):
 @dp.callback_query(F.data.in_({CallBackData.CREATE_REPORT}))
 async def btn_create_report(callback_query: types.callback_query):
     await create_all_report()
-    await bot.send_message(text='DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK end', chat_id=callback_query.from_user.id,
+    await bot.send_message(text='CREATE_REPORT end', chat_id=callback_query.from_user.id,
                            reply_markup=inline_kb_main)
 
 
