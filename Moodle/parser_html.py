@@ -1,5 +1,6 @@
 import json
 import re
+from asyncio import sleep
 from pathlib import Path
 from pprint import pprint
 
@@ -280,7 +281,7 @@ def generate_report(filename: Path, all_questions):
     create_html_page_report(test_info, all_category, answer_category, filename=report_filename)
 
 
-def create_all_report(is_only_new_report=True):
+async def create_all_report(is_only_new_report=True):
     dir_path = DIR_HTML_DOWNLOAD
     dir_report_path = DIR_REPORTS
     all_file = [filename_path for filename_path in dir_path.glob('*.html')] or []
@@ -296,3 +297,4 @@ def create_all_report(is_only_new_report=True):
     for file in all_file_filtered:
         print(f'\n{file}')
         generate_report(filename=Path(file), all_questions=all_questions)
+        await sleep(1)
