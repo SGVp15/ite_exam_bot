@@ -4,6 +4,7 @@ import pickle
 from Email import EmailSending
 from Email.config import EMAIL_BCC
 from Email.template import template_email_exam_result_passed
+from Itexpert.ite_api import sent_report_and_cert_lk
 from My_jinja import MyJinja
 from Utils.log import log
 from .XLSX.excel import get_contact_from_cert_excel
@@ -64,6 +65,7 @@ def main_create_exam_cert():
         all_users = [*successful_users, *old_users]
         pickle.dump(all_users, open(PICKLE_USERS, 'wb'))
         log.info('[Create PICKLE_USERS]')
+        sent_report_and_cert_lk()
 
 
 def create_exam_cert():
