@@ -1,6 +1,8 @@
 import datetime
 from pathlib import Path
 
+from Utils.translit import replace_ru_char_to_eng_char, transliterate
+from Utils.utils import clean_string
 from .config_cert_exam import DIR_CERTS, TEMPLATE_FOLDER
 
 
@@ -15,9 +17,9 @@ class CertContact:
                  date_exam: datetime.datetime | None = None,
                  exam_ru: str = '', exam_eng: str = '',
                  file_out_png: Path = '',
-                 template: str = ''):
-
-        self.can_create_cert = 0
+                 can_create_cert=0,
+                 ):
+        self.can_create_cert = can_create_cert or 0
         self.number = number
         self.abr_exam: str = abr_exam.upper()
         self.email: str = email.lower()
@@ -29,7 +31,9 @@ class CertContact:
         self.exam_ru: str = exam_ru.strip()
         self.exam_eng: str = exam_eng.strip()
         self.file_out_png: Path = file_out_png
-        self.template: str = template
+        self.template: str = ''
+        self.create_path_file()
+        self.normalize()
 
     def create_path_file(self):
         self.template = self.abr_exam + '.png'
@@ -59,3 +63,21 @@ class CertContact:
         except AttributeError:
             pass
         return False
+
+    def normalize(self):
+        self.ru_first_name = clean_string(self.ru_first_name).capitalize()
+        self.eng_last_name = clean_string(self.eng_last_name).capitalize()
+        self.eng_first_name = clean_string(self.eng_first_name).capitalize()
+        self.email = replace_ru_char_to_eng_char(clean_string(self.email).lower())
+
+        if not self.eng_first_name:
+            self.eng_first_name = transliterate(f'{self.ru_first_name}').capitalize()
+        else:
+            self.eng_first_name = replace_ru_char_to_eng_char(self.eng_first_name)
+
+        if not self.eng_last_name:
+            self.eng_last_name = transliterate(f'{self.ru_last_name}').capitalize()
+        else:
+            self.eng_last_name = replace_ru_char_to_eng_char(self.eng_last_name)
+
+        self.email = replace_ru_char_to_eng_char(self.email.strip())

@@ -215,11 +215,3 @@ def load_contacts_from_log_file(
                 contacts.append(c)
 
     return contacts
-
-
-if __name__ == '__main__':
-    contacts = load_contacts_from_log_file(date_start=datetime.datetime(2026, 1, 23))
-    for c in contacts:
-        if c:
-            c.normalize()
-            print(c)
