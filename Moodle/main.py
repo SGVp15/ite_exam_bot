@@ -1,11 +1,10 @@
-import asyncio
 import re
 from asyncio import sleep
 
+from Utils.log import log
 from .config import DIR_HTML_DOWNLOAD, BASE_URL
 from .moodleSelenium.moodle_selenium import MoodleSelenium
-from Utils.log import log
-from .parser_html import parse_data_questions_html
+from .parser_html import parse_data_questions_html, create_all_report
 
 
 async def download_reports_moodle(is_only_new=True, start_num=None):
@@ -15,13 +14,13 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
     await webdriver_moodle.authorization()
     await sleep(2)
 
-    k = 0
     i = 0
     if file_names and is_only_new:
         i = max(file_names) - 10
     if start_num:
         i = start_num
 
+    k = 0
     while True:
         i += 1
         if is_only_new and i in file_names:
@@ -80,6 +79,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
                 f.write(f'{user_email=}\n{html_content}')
                 k = 0
                 log.info(f'Download review moodle [{url}]')
+
         except IndexError as e:
             k += 1
             continue
@@ -90,4 +90,5 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
         if k > 20:
             break
     await webdriver_moodle.quit()
+    await create_all_report(is_only_new_report=True)
     return None

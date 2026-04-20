@@ -208,9 +208,7 @@ def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
 
 def generate_report(filename: Path, all_questions):
     all_questions = all_questions[:]
-
     try:
-        filename = filename
         with open(filename, 'r', encoding='utf-8') as f:
             html_content = f.read()
 

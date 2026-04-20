@@ -71,7 +71,7 @@ class MoodleSelenium:
 
                     await self._run_async(_fill_form)
 
-                await asyncio.sleep(0.2)  # Асинхронная пауза
+                await asyncio.sleep(0.2)
                 break
             except self.web_error:
                 if i == 1: raise  # Если на второй попытке ошибка — пробрасываем выше

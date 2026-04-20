@@ -16,4 +16,4 @@ PICKLE_USERS = Path('./users.pk').resolve()
 # --- Excel --- Excel --- Excel --- Excel --- Excel --- Excel --- Excel ---
 SHEETNAME: str = 'Экзамены'
 
-DELTA_DAYS = 2
+DELTA_DAYS = 3
