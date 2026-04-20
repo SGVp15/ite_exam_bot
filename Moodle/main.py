@@ -18,7 +18,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
     k = 0
     i = 0
     if file_names and is_only_new:
-        i = max(file_names) - 5
+        i = max(file_names) - 10
     if start_num:
         i = start_num
 
