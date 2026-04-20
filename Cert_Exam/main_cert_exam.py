@@ -23,15 +23,15 @@ def load_old_users():
     return old_users
 
 
-def main_create_exam_cert():
-    old_users = load_old_users()
-    print(f'old_users: {len(old_users)}\n')
+def main_create_exam_cert(can_send_email=True):
+    # old_users = load_old_users()
+    # print(f'old_users: {len(old_users)}\n')
     users_from_cer_excel = get_contact_from_cert_excel()
     print(f'excel_users: {len(users_from_cer_excel)}\n')
     certs_files = [f for f in DIR_CERTS.rglob('*') if f.is_file() and f.suffix == '.png']
     print(f'old_certs_files: {len(certs_files)}\n')
-    new_users = [user for user in users_from_cer_excel if user not in old_users]
-
+    # new_users = [user for user in users_from_cer_excel if user not in old_users]
+    new_users = users_from_cer_excel
     new_users = [u for u in new_users
                  if (datetime.datetime.now() >= u.date_exam + datetime.timedelta(days=DELTA_DAYS)
                      or u.can_create_cert in (1, '1'))]
@@ -45,16 +45,16 @@ def main_create_exam_cert():
     successful_users = []
     for i, contact in enumerate(new_users):
         try:
-
             create_png(contact)
-
-            EmailSending(
-                to=[contact.email, ],
-                bcc=EMAIL_BCC,
-                subject='Поздравляем с успешной сдачей экзамена!',
-                # text='text',
-                html=MyJinja(template_file=template_email_exam_result_passed).render_document(user=contact)
-            ).send_email()
+            html = MyJinja(template_file=template_email_exam_result_passed).render_document(user=contact)
+            if can_send_email:
+                EmailSending(
+                    to=[contact.email, ],
+                    bcc=EMAIL_BCC,
+                    subject='Поздравляем с успешной сдачей экзамена!',
+                    # text='text',
+                    html=html,
+                ).send_email()
 
             log.info(f'[{i + 1}/{len(new_users)}]\t{contact.file_out_png}')
             successful_users.append(contact)
@@ -68,8 +68,8 @@ def main_create_exam_cert():
         sent_report_and_cert_lk()
 
 
-def create_exam_cert():
+def create_exam_cert(can_send_email=True):
     try:
-        main_create_exam_cert()
+        main_create_exam_cert(can_send_email)
     except Exception as e:
         log.error(e)

@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from EXCEL.excel_reader import get_all_questions_from_excel_file
 from My_jinja import MyJinja
 from Question import Question
+from Utils.log import log
 from Utils.translit import replace_ru_char_to_eng_char
 from .config import QUESTION_INPUT_DIR_XLSX, DIR_HTML_DOWNLOAD, DIR_REPORTS
 
@@ -104,11 +105,9 @@ def parse_quiz_review(html_content: str) -> dict:
     return results
 
 
-def parse_data_questions_html(filename):
+def parse_data_questions_html(html_content):
     try:
         email = ''
-        with open(filename, 'r', encoding='utf-8') as f:
-            html_content = f.read()
         if html_content:
             f_line = html_content.split('\n')
             if f_line:
@@ -124,9 +123,6 @@ def parse_data_questions_html(filename):
         a = json.dumps(parsed_data, indent=4, ensure_ascii=False)
         python_object = json.loads(a)
         return email, python_object
-    except FileNotFoundError:
-        print("Ошибка: Файл не найден.")
-        return '', None
     except Exception as e:
         print(f"Произошла ошибка при парсинге: {e}")
         return '', None
@@ -212,75 +208,87 @@ def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
 
 def generate_report(filename: Path, all_questions):
     all_questions = all_questions[:]
-    email, data = parse_data_questions_html(filename=filename)
-    if not data:
-        return
-    questions_user_json = data['questions']
-    test_info = data['test_info']
-    exam = data['test_info'].get('test_name').replace(' ТЕСТ', '')
-    if email:
-        test_info['email'] = email
 
-    questions_user = []
-    for i, q in enumerate(questions_user_json):
-        c = Question(
-            text_question=q.get('question_text'),
-            ans_a=q.get('answers')[0],
-            ans_b=q.get('answers')[1],
-            ans_c=q.get('answers')[2],
-            ans_d=q.get('answers')[3],
-        )
-        c.status = q.get('status')
-        c.exam = exam
-        questions_user.append(c)
-
-    if len(questions_user_json) != len(questions_user):
-        return 'len(questions_user_json) != len(questions_user)'
-
-    all_questions = [q for q in all_questions if
-                     replace_ru_char_to_eng_char(exam.lower()) == replace_ru_char_to_eng_char(q.exam.lower())]
-
-    all_questions_filtered = []
-    not_questions = []
-    for q in questions_user:
-        if q in all_questions:
-            all_questions_filtered.append(q)
-        else:
-            not_questions.append(q)
-
-    if not_questions:
-        print(f'!!! not_questions !!! {len(not_questions)}\n\n')
-        return None
-
-    answer_category = {}
-    all_category = {}
-    for q in all_questions:
-        answer_category[q.category] = 0
-        all_category[q.category] = 0
-
-    for i, q in enumerate(questions_user):
-        q: Question
-        for q_all in all_questions:
-            q_all: Question
-            if q == q_all:
-                all_category[q_all.category] += 1
-                if q.status == 'Верно':
-                    answer_category[q_all.category] += 1
-                break
-    test_info = clean_test_infp(test_info)
-    pprint(test_info)
-    date_start = dateparser.parse(test_info['Тест начат'])
-    print(f'{date_start=}')
     try:
-        print(test_info['Завершен'])
-    except KeyError:
-        pass
+        filename = filename
+        with open(filename, 'r', encoding='utf-8') as f:
+            html_content = f.read()
 
-    for k in sorted(all_category.keys()):
-        print(f'{k}\t{answer_category[k]}\t{all_category[k]}')
+        email, data = parse_data_questions_html(html_content)
+        if not data:
+            return
+        if not data or data['test_info']['Состояние'].lower() not in ('завершены',):
+            return
 
-    report_filename = DIR_REPORTS / f'r_{date_start.strftime('%Y.%m.%d')}_{test_info['test_name']}_{test_info['user']}_{filename.name}'
-    create_html_page_report(test_info, all_category, answer_category, filename=report_filename)
+        questions_user_json = data['questions']
+        test_info = data['test_info']
+        exam = data['test_info'].get('test_name').replace(' ТЕСТ', '')
+        if email:
+            test_info['email'] = email
+
+        questions_user = []
+        for i, q in enumerate(questions_user_json):
+            c = Question(
+                text_question=q.get('question_text'),
+                ans_a=q.get('answers')[0],
+                ans_b=q.get('answers')[1],
+                ans_c=q.get('answers')[2],
+                ans_d=q.get('answers')[3],
+            )
+            c.status = q.get('status')
+            c.exam = exam
+            questions_user.append(c)
+
+        if len(questions_user_json) != len(questions_user):
+            return 'len(questions_user_json) != len(questions_user)'
+
+        all_questions = [q for q in all_questions if
+                         replace_ru_char_to_eng_char(exam.lower()) == replace_ru_char_to_eng_char(q.exam.lower())]
+
+        all_questions_filtered = []
+        not_questions = []
+        for q in questions_user:
+            if q in all_questions:
+                all_questions_filtered.append(q)
+            else:
+                not_questions.append(q)
+
+        if not_questions:
+            print(f'!!! not_questions !!! {len(not_questions)}\n\n')
+            return None
+
+        answer_category = {}
+        all_category = {}
+        for q in all_questions:
+            answer_category[q.category] = 0
+            all_category[q.category] = 0
+
+        for i, q in enumerate(questions_user):
+            q: Question
+            for q_all in all_questions:
+                q_all: Question
+                if q == q_all:
+                    all_category[q_all.category] += 1
+                    if q.status == 'Верно':
+                        answer_category[q_all.category] += 1
+                    break
+        test_info = clean_test_infp(test_info)
+        pprint(test_info)
+        date_start = dateparser.parse(test_info['Тест начат'])
+        print(f'{date_start=}')
+        try:
+            print(test_info['Завершен'])
+        except KeyError:
+            pass
+
+        for k in sorted(all_category.keys()):
+            print(f'{k}\t{answer_category[k]}\t{all_category[k]}')
+
+        report_filename = DIR_REPORTS / f'r_{date_start.strftime('%Y.%m.%d')}_{test_info['test_name']}_{test_info['user']}_{filename.name}'
+        create_html_page_report(test_info, all_category, answer_category, filename=report_filename)
+    except Exception as e:
+        log.error(f'{e}')
+        return
 
 
 async def create_all_report(is_only_new_report=True):
