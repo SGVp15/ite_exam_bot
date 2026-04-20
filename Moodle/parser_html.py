@@ -8,6 +8,8 @@ import dateparser
 from bs4 import BeautifulSoup
 
 from EXCEL.excel_reader import get_all_questions_from_excel_file
+from Email import EmailSending
+from Email.config import EMAIL_LOGIN, EMAIL_PASSWORD, SMTP_SERVER, EMAIL_BCC, SMTP_PORT
 from My_jinja import MyJinja
 from Question import Question
 from Utils.log import log
@@ -306,3 +308,31 @@ async def create_all_report(is_only_new_report=True):
         print(f'\n{file}')
         generate_report(filename=Path(file), all_questions=all_questions)
         await sleep(0.5)
+
+    # if all_file_filtered:
+    #     sendEmail
+    #
+    # subject = 'Экзамен '
+    # if contact_for_email_:
+    #     text = ''
+    #     for c in contact_for_email_:
+    #         if c.online:
+    #             text += 'Online '
+    #         else:
+    #             text += 'Offline '
+    #         text += (
+    #             f'{c.date_exam.strftime(c.pattern_time)}\n'
+    #             f'{c.exam}\n'
+    #             f'{c.ru_last_name} {c.ru_first_name} {c.email}\n'
+    #             f'Логин={c.username}\n'
+    #             f'Пароль={c.password}\n'
+    #             f'url={c.url}\n'
+    #             f'\n{"-" * 30}\n'
+    #         )
+    #         subject += f'{c.exam} {c.date_exam} '
+    #
+    #     email = EmailSending(
+    #         subject=f'{subject}', from_email=EMAIL_LOGIN, to=EMAIL_BCC, cc='', bcc='',
+    #         text=text, html='', smtp_server=SMTP_SERVER, smtp_port=SMTP_PORT,
+    #         login=EMAIL_LOGIN, password=EMAIL_PASSWORD, manager=None)
+    #     email.send_email()
