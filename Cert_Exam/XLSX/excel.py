@@ -22,7 +22,7 @@ def get_contact_from_cert_excel(filename=FILE_XLSX) -> list[CertContact]:
         try:
             (num,
              date,
-             abr_exam,
+             exam,
              ru_last_name,
              ru_first_name,
              eng_last_name,
@@ -38,7 +38,7 @@ def get_contact_from_cert_excel(filename=FILE_XLSX) -> list[CertContact]:
 
             contact = CertContact(
                 number=number,
-                abr_exam=abr_exam,
+                exam=exam,
                 date_exam=dateparser.parse(date, settings=date_settings),
                 last_name_ru=ru_last_name,
                 first_name_ru=ru_first_name,

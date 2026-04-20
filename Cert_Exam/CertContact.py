@@ -8,7 +8,7 @@ from .config_cert_exam import DIR_CERTS, TEMPLATE_FOLDER
 
 class CertContact:
     def __init__(self, number: int = 0,
-                 abr_exam: str = '',
+                 exam: str = '',
                  email: str = '',
                  last_name_ru: str = '',
                  first_name_ru: str = '',
@@ -21,7 +21,7 @@ class CertContact:
                  ):
         self.can_create_cert = can_create_cert or 0
         self.number = number
-        self.abr_exam: str = abr_exam.upper()
+        self.exam: str = exam.upper()
         self.email: str = email.lower()
         self.ru_last_name: str = last_name_ru.strip()
         self.ru_first_name: str = first_name_ru.strip()
@@ -36,20 +36,20 @@ class CertContact:
         self.normalize()
 
     def create_path_file(self):
-        self.template = self.abr_exam + '.png'
+        self.template = self.exam + '.png'
         if not Path(TEMPLATE_FOLDER, self.template).exists():
             raise FileNotFoundError
         date_exam = f"{self.date_exam.strftime('%Y.%m.%d')}"
         self.file_out_png = Path(DIR_CERTS, self.date_exam.strftime('%Y'),
                                  self.date_exam.strftime('%m'),
-                                 f"{self.abr_exam}_{date_exam}_{self.ru_last_name}_{self.ru_first_name}"
+                                 f"{self.exam}_{date_exam}_{self.ru_last_name}_{self.ru_first_name}"
                                  f"_{self.number}_{self.email}.png")
 
     def __eq__(self, other):
         try:
             if (
                     self.number == other.number and
-                    self.abr_exam == other.abr_exam and
+                    self.exam == other.exam and
                     self.email == other.email and
                     self.ru_last_name == other.ru_last_name and
                     self.ru_first_name == other.ru_first_name and
