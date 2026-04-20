@@ -63,7 +63,7 @@ async def main():
     scheduler.add_job(
         server_file_registration,
         IntervalTrigger(seconds=120),
-        id='server_file_registration',
+        id='Server_file_registration',
         next_run_time=datetime.datetime.now(),  # Проверить сразу при старте
         replace_existing=True,
     )
