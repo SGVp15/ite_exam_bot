@@ -1,6 +1,7 @@
 import re
 from asyncio import sleep
 
+from Email import EmailSending
 from Itexpert.ite_api import sent_report_and_cert_lk
 from Utils.log import log
 from .config import DIR_HTML_DOWNLOAD, BASE_URL
@@ -56,6 +57,14 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
 
             # questions_user_json = data['questions']
             test_info = data['test_info']
+            procent = 0
+            try:
+                procent = test_info['Оценка']
+                procent = re.findall(r'(\d+,.)%', str(procent))[0]
+                procent = str(procent).replace(',', '.')
+                procent = float(procent)
+            except Exception as e:
+                print(e)
 
             # exam = data['test_info'].get('test_name').replace(' ТЕСТ', '')
             if email:
@@ -80,6 +89,16 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
                 f.write(f'{user_email=}\n{html_content}')
                 k = 0
                 log.info(f'Download review moodle [{url}]')
+                text = ''
+                for k, v in test_info:
+                    text += f'{k} : {v}\n'
+                if procent >= 69:
+                    EmailSending(
+                        # to=['exam@itexpert.ru', ],
+                        bcc=['g.savushkin@itexpert.ru', ],
+                        subject='Проверьте прокторинг',
+                        text=text,
+                    ).send_email()
 
         except IndexError as e:
             k += 1

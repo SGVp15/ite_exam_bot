@@ -215,8 +215,6 @@ def generate_report(filename: Path, all_questions):
             html_content = f.read()
 
         email, data = parse_data_questions_html(html_content)
-        if not data:
-            return
         if not data or data['test_info']['Состояние'].lower() not in ('завершены',):
             return
 
