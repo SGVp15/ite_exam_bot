@@ -68,7 +68,7 @@ async def main():
         replace_existing=True,
     )
 
-    # Запуск проверки обновлений Git каждые 60 секунд
+    # Запуск проверки обновлений Git каждые 120 секунд
     scheduler.add_job(
         git_update,
         IntervalTrigger(seconds=120),

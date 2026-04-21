@@ -1,6 +1,7 @@
 import re
 from asyncio import sleep
 
+from Itexpert.ite_api import sent_report_and_cert_lk
 from Utils.log import log
 from .config import DIR_HTML_DOWNLOAD, BASE_URL
 from .moodleSelenium.moodle_selenium import MoodleSelenium
@@ -26,7 +27,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
         if is_only_new and i in file_names:
             k = 0
             continue
-
+        await sleep(0.1)
         url = f'{BASE_URL}/mod/quiz/review.php?attempt={i}'
         webdriver_moodle.driver.get(url)
         html_content = webdriver_moodle.driver.page_source
@@ -90,5 +91,8 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
         if k > 20:
             break
     await webdriver_moodle.quit()
+    await sleep(0.1)
     await create_all_report(is_only_new_report=True)
+    await sleep(0.1)
+    await sent_report_and_cert_lk()
     return None
