@@ -94,7 +94,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
                     text += f'{k} : {v}\n'
                 if procent >= 69:
                     EmailSending(
-                        # to=['exam@itexpert.ru', ],
+                        to=['exam@itexpert.ru', ],
                         bcc=['g.savushkin@itexpert.ru', ],
                         subject='Проверьте прокторинг',
                         text=text,
