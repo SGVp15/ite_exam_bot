@@ -215,6 +215,7 @@ async def generate_report(filename: Path, bank_questions):
 
     with open(filename, 'r', encoding='utf-8') as f:
         html_content = f.read()
+    await sleep(0.1)
 
     email, data = parse_data_questions_html(html_content)
     if not data or data['test_info']['Состояние'].lower() not in ('завершены',):
