@@ -1,4 +1,5 @@
 import datetime
+from asyncio import sleep
 
 from Contact import Contact, load_contacts_from_log_file
 from Email import EmailSending, template_email_registration_exam_offline, template_email_registration_exam_online
@@ -43,11 +44,13 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
     if not new_contacts:
         return 'Проверьте файл. Нет новых пользователей.'
 
+    await sleep(0.1)
     # -------------- Moodle --------------
     moodle_api = MoodleApi()
     for contact in new_contacts:
         moodle_api.process_user_and_enrollment(contact=contact)
 
+    await sleep(0.1)
     # -------------- ProctorEDU --------------
     contacts_proctoring = [c for c in new_contacts if c.online]
     if contacts_proctoring:
@@ -56,6 +59,7 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
                 contact.url = ''
                 generate_new_proctoring_link_by_contact(contact)
 
+    await sleep(0.1)
     # -------------- SEND EMAIL --------------
     log.info(f'[ start ] SEND EMAIL ')
     for contact in new_contacts:
