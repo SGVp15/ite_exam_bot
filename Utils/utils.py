@@ -1,8 +1,26 @@
 import base64
+import functools
 import hashlib
-import os
 import re
+import sys
 from pathlib import Path
+
+from Utils.log import log
+
+
+def all_exception(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except KeyboardInterrupt:
+            print("\nПрограмма принудительно завершена пользователем.")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Произошла ошибка в работе программы: {e}")
+            log.error(f'{e}')
+
+    return wrapper
 
 
 def to_md5(s: str):
