@@ -104,7 +104,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
             k += 1
             continue
         except Exception as e:
-            log.error('{e}')
+            log.error(f'{e}')
             k += 1
         await sleep(0.1)
         if k > 20:
