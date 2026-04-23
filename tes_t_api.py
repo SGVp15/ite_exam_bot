@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     # 4. Тестирование удаления экзамена
     # del_exam = [i for i in range(28850,28862)]
-    del_exam = (28864, 28863)
+    del_exam = (28980,)
     delete_exams(del_exam)
     raise 'end'
 
