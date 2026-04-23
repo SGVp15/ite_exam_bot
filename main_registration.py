@@ -24,7 +24,7 @@ def generate_new_proctoring_link_by_contact(contact):
 
 
 async def server_file_registration():
-    print('start server_file_registration')
+    print(' ---> START [server_file_registration]')
     contacts = get_contact_from_excel(filename=TEMPLATE_SERVER_FILE_XLSX)
     await registration(contacts)
 
