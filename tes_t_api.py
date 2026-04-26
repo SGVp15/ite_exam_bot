@@ -38,6 +38,9 @@ def delete_exams(del_exam: list):
 
 if __name__ == '__main__':
     ite_api = ITEXPERT_API()
+    # asyncio.run(sent_report_and_cert_lk(date=datetime.datetime(year=2026, month=3, day=20)))
+    asyncio.run(sent_report_and_cert_lk())
+    raise 'end'
     all_exam = ite_api.get_list_exams()
     pprint(all_exam.text)
     # raise 'end'
