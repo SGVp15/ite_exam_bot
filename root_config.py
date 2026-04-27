@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dotenv import dotenv_values, find_dotenv
 
-VERSION = '1.6'
+VERSION = '1.7'
 
 config = dotenv_values(find_dotenv())
 
@@ -15,7 +15,6 @@ if not BOT_TOKEN:
 
 DIR_DATA = Path('./data').resolve()
 DIR_DATA.mkdir(parents=True, exist_ok=True)
-LOG_FILE = Path(DIR_DATA / 'log.txt')
 
 #  ====================================================================================================================
 #  -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL -- EXCEL
@@ -25,10 +24,13 @@ DIR_template.mkdir(parents=True, exist_ok=True)
 TEMPLATE_FILE_XLSX = DIR_template / 'template.xlsx'
 PAGE_NAME: str = 'Экзамены'
 
-TEMPLATE_SERVER_FILE_XLSX = "//192.168.20.100/Administrative server/РАБОТА АДМИНИСТРАТОРА/ОРГАНИЗАЦИЯ IT ЭКЗАМЕНОВ/ЭКЗАМЕНЫ ЦИФРОВОЙ ПУТЬ/Регистрация_На_Экзамен.xlsx"
+SERVER_DIR = Path(
+    "//192.168.20.100/Administrative server/РАБОТА АДМИНИСТРАТОРА/ОРГАНИЗАЦИЯ IT ЭКЗАМЕНОВ/ЭКЗАМЕНЫ ЦИФРОВОЙ ПУТЬ/")
+TEMPLATE_SERVER_FILE_XLSX = SERVER_DIR / "Регистрация_На_Экзамен.xlsx"
 
 #  == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL
 #  ====================================================================================================================
+LOG_FILE = Path(SERVER_DIR / 'log.txt')
 
 PATH_DOWNLOAD_FILE = DIR_DATA / 'input'
 DOCUMENTS = PATH_DOWNLOAD_FILE / 'documents'

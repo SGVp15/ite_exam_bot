@@ -26,34 +26,31 @@ def delete_exams(del_exam: list):
     ite_api = ITEXPERT_API()
     for id_exam_delete in del_exam:
         print(f"\n[4. delete_exam_by_id({id_exam_delete})]")
-        r_delete = ite_api.delete_exam_by_id(id_exam_delete)
+        r_delete = ITEXPERT_API().delete_exam_by_id(id_exam_delete)
         print("Результат удаления:", r_delete.status_code)
-    print(f"\n[get_exam_by_email({email})]")
-    r_id = ite_api.get_exam_by_email(email)
-    if r_id and r_id.ok:
-        pprint(json.loads(r_id.text))
-    else:
-        print("Не удалось получить экзамен по ID.")
 
 
 if __name__ == '__main__':
-    ite_api = ITEXPERT_API()
+    del_exam = (28774,)
+    delete_exams(del_exam)
+    raise 'end'
+
     # asyncio.run(sent_report_and_cert_lk(date=datetime.datetime(year=2026, month=3, day=20)))
     asyncio.run(sent_report_and_cert_lk())
     raise 'end'
-    all_exam = ite_api.get_list_exams()
+    all_exam = ITEXPERT_API().get_list_exams()
     pprint(all_exam.text)
     # raise 'end'
 
     # # # Обновить экзамен
-    # ite_api.add_exam_in_to_exam_by_id(id=28774, exam_in='21008')
+    # ITEXPERT_API().add_exam_in_to_exam_by_id(id=28774, exam_in='21008')
 
     email = 'test@test.tt'
-    r_id = ite_api.get_exam_by_email(email)
+    r_id = ITEXPERT_API().get_exam_by_email(email)
 
     # 4. Тестирование удаления экзамена
     # del_exam = [i for i in range(28850,28862)]
-    del_exam = (28980,)
+    del_exam = (28774,)
     delete_exams(del_exam)
     raise 'end'
 
@@ -114,7 +111,7 @@ if __name__ == '__main__':
     #
     for id_exam in [28708, 28499, 26700]:
         print(f"\n[2. get_exam_by_id({id_exam})]")
-        r_id = ite_api.get_exam_by_id(id_exam)
+        r_id = ITEXPERT_API().get_exam_by_id(id_exam)
         if r_id and r_id.ok:
             try:
                 d = json.loads(r_id.text)
@@ -135,7 +132,7 @@ if __name__ == '__main__':
 #     #
 #     # # 3. Тестирование создания экзамена
 #     # print(f"\n[3. create_exam({contact})]")
-#     # r_create = ite_api.create_exam(contact)
+#     # r_create = ITEXPERT_API().create_exam(contact)
 #     # if r_create:
 #     #     print("Результат создания:", r_create.status_code)
 #     #
