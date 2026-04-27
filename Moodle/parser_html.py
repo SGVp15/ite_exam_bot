@@ -14,7 +14,7 @@ from My_jinja import MyJinja
 from Question import Question
 from Utils.log import log
 from Utils.translit import replace_ru_char_to_eng_char
-from Utils.utils import all_exception
+from Utils.utils import all_exception_async
 from .config import QUESTION_INPUT_DIR_XLSX, DIR_HTML_DOWNLOAD, DIR_REPORTS
 
 
@@ -131,7 +131,7 @@ def parse_data_questions_html(html_content):
         return '', None
 
 
-@all_exception
+@all_exception_async
 async def create_html_page_report(test_info: dict, all_category: dict, answer_category: dict,
                                   filename="quiz_report.html"):
     """
@@ -195,7 +195,7 @@ def clean_test_infp(data):
     return data
 
 
-@all_exception
+@all_exception_async
 def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
     exams_name_path = {}
     for file in dir.glob('*.xlsx'):
@@ -209,7 +209,7 @@ def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
     return all_questions
 
 
-@all_exception
+@all_exception_async
 async def generate_report(filename: Path, bank_questions):
     bank_questions = bank_questions[:]
 
@@ -289,7 +289,7 @@ async def generate_report(filename: Path, bank_questions):
     await create_html_page_report(test_info, all_category, answer_category, filename=_report_filename)
 
 
-@all_exception
+@all_exception_async
 async def create_all_report(is_only_new_report=True):
     dir_path = DIR_HTML_DOWNLOAD
     dir_report_path = DIR_REPORTS

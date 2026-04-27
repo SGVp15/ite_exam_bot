@@ -9,7 +9,7 @@ from Moodle.API.moodleapi import MoodleApi
 from My_jinja.my_jinja import MyJinja
 from ProctorEDU.gen_link import generate_proctoring_link
 from Utils.log import log
-from Utils.utils import all_exception
+from Utils.utils import all_exception_async
 from parser import get_contact_from_excel
 from root_config import LOG_FILE, ALLOWED_EXAMS, TEMPLATE_SERVER_FILE_XLSX
 
@@ -22,14 +22,14 @@ def generate_new_proctoring_link_by_contact(contact):
     return url
 
 
-@all_exception
+@all_exception_async
 async def server_file_registration():
     print(' ---> START [server_file_registration]')
     contacts = get_contact_from_excel(filename=TEMPLATE_SERVER_FILE_XLSX)
     await registration(contacts)
 
 
-@all_exception
+@all_exception_async
 async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
     contacts = contacts[:]
     out_str = ''

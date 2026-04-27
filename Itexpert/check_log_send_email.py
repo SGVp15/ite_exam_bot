@@ -5,7 +5,7 @@ from Contact import Contact
 from Email import EmailSending
 from Email.config import EMAIL_LOGIN, SMTP_SERVER, SMTP_PORT, EMAIL_PASSWORD, EMAIL_BCC
 from Utils.check_time import check_time_interval
-from Utils.utils import all_exception
+from Utils.utils import all_exception_async
 from root_config import LOG_FILE
 
 
@@ -24,7 +24,7 @@ def get_contacts_from_logs() -> [Contact]:
     return contacts
 
 
-@all_exception
+@all_exception_async
 async def check_log_and_send_email_to_manager():
     contact_for_email_ = []
     await sleep(0.5)

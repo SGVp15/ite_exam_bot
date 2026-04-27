@@ -10,6 +10,21 @@ from Utils.log import log
 
 def all_exception(func):
     @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except KeyboardInterrupt:
+            print("\nПрограмма принудительно завершена пользователем.")
+            sys.exit(0)
+        except Exception as e:
+            print(f"Произошла ошибка в работе программы: {e}")
+            log.error(f'{e}')
+
+    return wrapper
+
+
+def all_exception_async(func):
+    @functools.wraps(func)
     async def wrapper(*args, **kwargs):
         try:
             return await func(*args, **kwargs)
