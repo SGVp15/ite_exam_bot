@@ -4,7 +4,6 @@ from asyncio import sleep
 from Contact import Contact, load_contacts_from_log_file
 from Email import EmailSending, template_email_registration_exam_offline, template_email_registration_exam_online
 from Email.config import EMAIL_BCC
-from Email.template import template_email_new_link_for_old_users
 from Itexpert.ite_api import ITEXPERT_API
 from Moodle.API.moodleapi import MoodleApi
 from My_jinja.my_jinja import MyJinja
@@ -23,6 +22,7 @@ def generate_new_proctoring_link_by_contact(contact):
     return url
 
 
+@all_exception
 async def server_file_registration():
     print(' ---> START [server_file_registration]')
     contacts = get_contact_from_excel(filename=TEMPLATE_SERVER_FILE_XLSX)
