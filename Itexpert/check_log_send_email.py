@@ -5,6 +5,7 @@ from Contact import Contact
 from Email import EmailSending
 from Email.config import EMAIL_LOGIN, SMTP_SERVER, SMTP_PORT, EMAIL_PASSWORD, EMAIL_BCC
 from Utils.check_time import check_time_interval
+from Utils.utils import all_exception
 from root_config import LOG_FILE
 
 
@@ -23,9 +24,13 @@ def get_contacts_from_logs() -> [Contact]:
     return contacts
 
 
+@all_exception
 async def check_log_and_send_email_to_manager():
     contact_for_email_ = []
+    await sleep(0.5)
     contacts = get_contacts_from_logs()
+    await sleep(0.5)
+
     for c in contacts:
         c: Contact
         if check_time_interval(
@@ -65,7 +70,7 @@ async def check_log_and_send_email_to_manager():
                 f'\n{"-" * 30}\n'
             )
             subject += f'{c.exam} {c.date_exam} '
-
+        await sleep(0.5)
         email = EmailSending(
             subject=f'{subject}', from_email=EMAIL_LOGIN, to=EMAIL_BCC, cc='', bcc='',
             text=text, html='', smtp_server=SMTP_SERVER, smtp_port=SMTP_PORT,
