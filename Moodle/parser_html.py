@@ -14,7 +14,7 @@ from My_jinja import MyJinja
 from Question import Question
 from Utils.log import log
 from Utils.translit import replace_ru_char_to_eng_char
-from Utils.utils import all_exception_async
+from Utils.utils import all_exception_async, all_exception
 from .config import QUESTION_INPUT_DIR_XLSX, DIR_HTML_DOWNLOAD, DIR_REPORTS
 
 
@@ -195,7 +195,7 @@ def clean_test_infp(data):
     return data
 
 
-@all_exception_async
+@all_exception
 def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
     exams_name_path = {}
     for file in dir.glob('*.xlsx'):
