@@ -97,10 +97,10 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
 
 @all_exception_async
 async def send_new_link_proctoredu() -> str:
-    contacts = load_contacts_from_log_file(date_start=datetime.datetime.now(), date_end=datetime.datetime.now())
+    contacts_from_log_file = load_contacts_from_log_file(date_start=datetime.datetime.now(), date_end=datetime.datetime.now())
     out_str = ''
     c: Contact
-    contacts = [c for c in contacts if c.online]
+    contacts = [c for c in contacts_from_log_file if c.online]
     if not contacts:
         return 'Нет пользователей.'
 
