@@ -62,6 +62,10 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
     # -------------- SEND EMAIL --------------
     log.info(f'[ start ] SEND EMAIL ')
     for contact in new_contacts:
+        if contact.online and not contact.url:
+            out_str += f'[Error] URL {contact}\n'
+            log.error(f'[Error] URL {contact}')
+            continue
         if contact.online:
             log.info(f'MyJinja start template_email_registration_exam_online')
             text = MyJinja(template_file=template_email_registration_exam_online).render_document(user=contact)
@@ -69,10 +73,6 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
             log.info(f'MyJinja start template_email_registration_exam_offline')
             text = MyJinja(template_file=template_email_registration_exam_offline).render_document(user=contact)
         subject = f'Вы зарегистрированы на экзамен {contact.exam} {contact.date_exam}'
-        if contact.online and not contact.url:
-            out_str += f'[Error] URL {contact}\n'
-            log.error(f'[Error] URL {contact}')
-            continue
         EmailSending(subject=subject, to=contact.email, cc=contact.email_cc, bcc=EMAIL_BCC, text=text).send_email()
         contact.status = 'Ok'
     log.info(f'[ end ] SEND EMAIL ')
