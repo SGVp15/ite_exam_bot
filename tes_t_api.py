@@ -31,19 +31,19 @@ def delete_exams(del_exam: list):
 
 
 if __name__ == '__main__':
-    del_exam = (28774,)
+    del_exam = (29030,)
     delete_exams(del_exam)
     raise 'end'
 
     # asyncio.run(sent_report_and_cert_lk(date=datetime.datetime(year=2026, month=3, day=20)))
-    asyncio.run(sent_report_and_cert_lk())
-    raise 'end'
+    # asyncio.run(sent_report_and_cert_lk())
+    # raise 'end'
     all_exam = ITEXPERT_API().get_list_exams()
     pprint(all_exam.text)
-    # raise 'end'
 
     # # # Обновить экзамен
-    # ITEXPERT_API().add_exam_in_to_exam_by_id(id=28774, exam_in='21008')
+    ITEXPERT_API().add_exam_in_to_exam_by_id(id=28774, exam_in='21008')
+    # raise 'end'
 
     email = 'test@test.tt'
     r_id = ITEXPERT_API().get_exam_by_email(email)

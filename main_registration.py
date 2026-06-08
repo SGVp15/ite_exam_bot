@@ -15,11 +15,11 @@ from root_config import LOG_FILE, ALLOWED_EXAMS, TEMPLATE_SERVER_FILE_XLSX
 
 
 def generate_new_proctoring_link_by_contact(contact):
-    url = generate_proctoring_link(subject=contact.subject,
-                                   nickname=contact.email,
-                                   username=contact.username)
-    contact.url = url
-    return url
+    contact.url = generate_proctoring_link(
+        subject=contact.subject,
+        nickname=contact.email,
+        username=contact.username
+    )
 
 
 @all_exception_async
@@ -56,7 +56,6 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
     if contacts_proctoring:
         for contact in contacts_proctoring:
             if contact.online:
-                contact.url = ''
                 generate_new_proctoring_link_by_contact(contact)
 
     await sleep(0.1)
@@ -67,7 +66,7 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
             log.info(f'MyJinja start template_email_registration_exam_online')
             text = MyJinja(template_file=template_email_registration_exam_online).render_document(user=contact)
         else:
-            log.info(f'MyJinja start template_email_registration_exam_online')
+            log.info(f'MyJinja start template_email_registration_exam_offline')
             text = MyJinja(template_file=template_email_registration_exam_offline).render_document(user=contact)
         subject = f'Вы зарегистрированы на экзамен {contact.exam} {contact.date_exam}'
         if contact.online and not contact.url:
@@ -96,5 +95,47 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
     return out_str
 
 
-async def send_new_link_proctoredu(contacts: [Contact]) -> str:
-    return await registration(contacts, send_to_itexpert=False)
+@all_exception_async
+async def send_new_link_proctoredu() -> str:
+    contacts = load_contacts_from_log_file(date_start=datetime.datetime.now(), date_end=datetime.datetime.now())
+    out_str = ''
+    c: Contact
+    online_contacts = [c for c in contacts if c.online]
+    if not online_contacts:
+        return 'Нет пользователей.'
+
+    await sleep(0.1)
+    # -------------- ProctorEDU --------------
+    for contact in online_contacts:
+        generate_new_proctoring_link_by_contact(contact)
+
+    await sleep(0.1)
+    # -------------- SEND EMAIL --------------
+    log.info(f'[ start ] SEND EMAIL ')
+    for contact in online_contacts:
+        if contact.online:
+            log.info(f'MyJinja start template_email_registration_exam_online')
+            text = MyJinja(template_file=template_email_registration_exam_online).render_document(user=contact)
+        else:
+            log.info(f'MyJinja start template_email_registration_exam_offline')
+            text = MyJinja(template_file=template_email_registration_exam_offline).render_document(user=contact)
+        subject = f'Вы зарегистрированы на экзамен {contact.exam} {contact.date_exam}'
+        if contact.online and not contact.url:
+            out_str += f'[Error] URL {contact}\n'
+            log.error(f'[Error] URL {contact}')
+            continue
+        EmailSending(subject=subject, to=contact.email, cc=contact.email_cc, bcc=EMAIL_BCC, text=text).send_email()
+        contact.status = 'Ok'
+    log.info(f'[ end ] SEND EMAIL ')
+
+    # # Write Log
+    # with open(LOG_FILE, mode='a', encoding='utf-8') as f:
+    #     for contact in contacts:
+    #         f.write(str(contact))
+    #         log.info(contact)
+
+    # OUT STRING
+    for contact in contacts:
+        out_str += (f'{contact.ru_last_name} {contact.ru_first_name} '
+                    f'{contact.email} {contact.exam} {contact.date_exam}\n{contact.url} \n\n')
+    return out_str

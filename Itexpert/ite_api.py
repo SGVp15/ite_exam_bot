@@ -104,8 +104,10 @@ class ITEXPERT_API:
 
     # --- Методы POST/DELETE ---
 
-    def create_exam(self, contact: Contact) -> Optional[requests.Response]:
+    def create_exam(self, contact: Contact | None = None) -> Optional[requests.Response]:
         """Создает новый экзамен, используя данные из объекта Contact."""
+        if not contact:
+            return ''
         id_exam = self.get_exam_dict_code_id().get(contact.exam.lower())
         url = self._get_full_url(EXAM_ENDPOINT)
 
