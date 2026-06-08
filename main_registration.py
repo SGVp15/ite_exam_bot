@@ -100,30 +100,26 @@ async def send_new_link_proctoredu() -> str:
     contacts = load_contacts_from_log_file(date_start=datetime.datetime.now(), date_end=datetime.datetime.now())
     out_str = ''
     c: Contact
-    online_contacts = [c for c in contacts if c.online]
-    if not online_contacts:
+    contacts = [c for c in contacts if c.online]
+    if not contacts:
         return 'Нет пользователей.'
 
     await sleep(0.1)
     # -------------- ProctorEDU --------------
-    for contact in online_contacts:
+    for contact in contacts:
         generate_new_proctoring_link_by_contact(contact)
 
     await sleep(0.1)
     # -------------- SEND EMAIL --------------
     log.info(f'[ start ] SEND EMAIL ')
-    for contact in online_contacts:
-        if contact.online:
-            log.info(f'MyJinja start template_email_registration_exam_online')
-            text = MyJinja(template_file=template_email_registration_exam_online).render_document(user=contact)
-        else:
-            log.info(f'MyJinja start template_email_registration_exam_offline')
-            text = MyJinja(template_file=template_email_registration_exam_offline).render_document(user=contact)
-        subject = f'Вы зарегистрированы на экзамен {contact.exam} {contact.date_exam}'
+    for contact in contacts:
         if contact.online and not contact.url:
             out_str += f'[Error] URL {contact}\n'
             log.error(f'[Error] URL {contact}')
             continue
+        log.info(f'MyJinja start template_email_registration_exam_online')
+        text = MyJinja(template_file=template_email_registration_exam_online).render_document(user=contact)
+        subject = f'Вы зарегистрированы на экзамен {contact.exam} {contact.date_exam}'
         EmailSending(subject=subject, to=contact.email, cc=contact.email_cc, bcc=EMAIL_BCC, text=text).send_email()
         contact.status = 'Ok'
     log.info(f'[ end ] SEND EMAIL ')
