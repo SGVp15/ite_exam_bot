@@ -43,6 +43,7 @@ ALLOWED_EXAMS: list = [
     'CPIC',
     'Cobit2019C',
     'ICSC',
+    'DGTC',
     'ITAMC',
     'ITHRC',
     'ITIL4FC',
