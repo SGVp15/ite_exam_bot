@@ -19,7 +19,7 @@ async def send_welcome_admin(message: types.Message, state: FSMContext):
     await message.answer(text=text, reply_markup=inline.inline_kb_main)
 
 
-@dp.message(F.command.in_({'start', 'help'}) & F.from_user.id.in_({*USERS_ID}))
+@dp.message(F.command.in_({'start', 'help'}) & F.from_user.id.in_({*ADMIN_ID, *USERS_ID}))
 async def send_welcome_new_user(message: types.Message):
     text = f'Здравствуйте, {message.from_user.first_name}.'
     text += f'\n ❓/id - узнать ваш id'
@@ -27,7 +27,7 @@ async def send_welcome_new_user(message: types.Message):
     await message.answer(text=text, reply_markup=inline.inline_kb_main)
 
 
-@dp.message(Command('start', 'help'))
+@dp.message(Command('start', 'help') & F.from_user.id.in_({*ADMIN_ID, *USERS_ID}))
 async def send_welcome(message: types.Message):
     text = f'Здравствуйте, {message.from_user.first_name}.'
     text += f'\n ❓/id - узнать ваш id'
@@ -36,7 +36,7 @@ async def send_welcome(message: types.Message):
     await message.answer(text=text, reply_markup=inline.inline_kb_main)
 
 
-@dp.callback_query(F.data.in_({CallBackData.SHOW_VERSION}))
+@dp.callback_query(F.data.in_({CallBackData.SHOW_VERSION}) & F.from_user.id.in_({*ADMIN_ID, *USERS_ID}))
 async def btn_sent_report_and_cert_lk(callback_query: types.callback_query):
     await bot.send_message(text=f'{VERSION}', chat_id=callback_query.from_user.id,
                            reply_markup=inline_kb_main)

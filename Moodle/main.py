@@ -91,7 +91,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
                 k = 0
                 log.info(f'Download review moodle [{url}]')
                 text = ''
-                for k, v in test_info:
+                for k, v in test_info.items():
                     text += f'{k} : {v}\n'
                 if procent >= 69:
                     EmailSending(
