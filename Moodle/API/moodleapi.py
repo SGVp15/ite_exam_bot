@@ -98,19 +98,15 @@ class MoodleApi:
         log.info(f"Попытка обновить пароль для пользователя ID: {user_id}")
         try:
             response = requests.post(url_with_params, data=post_data_dict)
-            response.raise_for_status()
-            data = response.json() if response.text else []
-            if isinstance(data, list) and not data:
+            if response.status_code == 200:
                 return True
-            elif isinstance(data, dict) and 'exception' in data:
-                log.error(
-                    f"❌ Ошибка Moodle API при обновлении пароля: {data.get('errorcode')}. Сообщение: {data.get('message')}")
-                return False
-            else:
-                log.error(f"⚠️ Получен неожиданный формат ответа при обновлении пароля: {data}")
-                return False
+            log.error(
+                f"❌ Ошибка Moodle API при обновлении пароля: HTTP {response.status_code}. "
+                f"Ответ: {response.text}"
+            )
+            return False
         except requests.exceptions.RequestException as e:
-            log.error(f"❌ Произошла ошибка запроса (Сеть/HTTP) при обновлении пароля: {e}")
+            log.error(f"❌ Произошла ошибка запроса (Сеть) при обновлении пароля: {e}")
             return False
 
     def enrol_manual_enrol_users(self, course_id: int, user_id_to_enrol: int) -> bool:
@@ -143,7 +139,7 @@ class MoodleApi:
             response = requests.post(url_with_params, data=post_data_dict)
             response.raise_for_status()
             data = response.json() if response.text else []
-            if isinstance(data, list) and not data:
+            if response.status_code == 200:
                 log.info(f"✅ Зачисление ID {user_id_to_enrol} на курс {course_id} успешно.")
                 return True
             elif isinstance(data, dict) and 'exception' in data:
