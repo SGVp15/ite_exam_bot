@@ -46,14 +46,20 @@ async def download_document_handle(message: message):
         # asyncio.create_task(registration(contacts))
 
 
-@dp.callback_query(F.data.in_({CallBackData.DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK}))
+@dp.callback_query(
+    F.data.in_({CallBackData.DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK})
+    & F.from_user.id.in_({*ADMIN_ID, *USERS_ID})
+)
 async def btn_download_reports_moodle(callback_query: types.callback_query):
     await download_reports_moodle()
     await create_all_report()
     await bot.send_message(text='DOWNLOAD_REPORT_MOODLE_AND_CREATE_FOR_LK end', chat_id=callback_query.from_user.id,
                            reply_markup=inline_kb_main)
 
-@dp.callback_query(F.data.in_({CallBackData.CREATE_REPORT}))
+@dp.callback_query(
+    F.data.in_({CallBackData.CREATE_REPORT})
+    & F.from_user.id.in_({*ADMIN_ID, *USERS_ID})
+)
 async def btn_create_report(callback_query: types.callback_query):
     await create_all_report()
     await bot.send_message(text='CREATE_REPORT end', chat_id=callback_query.from_user.id,
@@ -61,14 +67,20 @@ async def btn_create_report(callback_query: types.callback_query):
 
 
 
-@dp.callback_query(F.data.in_({CallBackData.SENT_REPORT_AND_CERT_LK}))
+@dp.callback_query(
+    F.data.in_({CallBackData.SENT_REPORT_AND_CERT_LK})
+    & F.from_user.id.in_({*ADMIN_ID, *USERS_ID})
+)
 async def btn_sent_report_and_cert_lk(callback_query: types.callback_query):
     text = await sent_report_and_cert_lk(date=datetime.datetime.now())
     await bot.send_message(text=text, chat_id=callback_query.from_user.id,
                            reply_markup=inline_kb_main)
 
 
-@dp.callback_query(F.data.in_({CallBackData.SEND_NEW_LINK_PROCTOREDU}))
+@dp.callback_query(
+    F.data.in_({CallBackData.SEND_NEW_LINK_PROCTOREDU})
+    & F.from_user.id.in_({*ADMIN_ID, *USERS_ID})
+)
 async def btn_send_new_link_proctoredu(callback_query: types.callback_query):
     text = await send_new_link_proctoredu()
     await bot.send_message(text=text, chat_id=callback_query.from_user.id,

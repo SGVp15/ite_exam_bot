@@ -5,13 +5,13 @@ from Email import EmailSending
 from Itexpert.ite_api import sent_report_and_cert_lk
 from Utils.log import log
 from Utils.utils import all_exception_async
-from .config import DIR_HTML_DOWNLOAD, BASE_URL
+from .config import PATH_DIR_HTML_DOWNLOAD, BASE_URL
 from .moodleSelenium.moodle_selenium import MoodleSelenium
 from .parser_html import parse_data_questions_html, create_all_report
 
 @all_exception_async
 async def download_reports_moodle(is_only_new=True, start_num=None):
-    file_names = [int(re.sub(r'\.html$', '', f.name)) for f in DIR_HTML_DOWNLOAD.iterdir() if
+    file_names = [int(re.sub(r'\.html$', '', f.name)) for f in PATH_DIR_HTML_DOWNLOAD.iterdir() if
                   f.is_file() and f.name.endswith('html')]
     webdriver_moodle = MoodleSelenium(base_url=BASE_URL)
     await webdriver_moodle.authorization()
@@ -86,7 +86,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
                 # Возвращаемся обратно
                 webdriver_moodle.driver.back()
 
-            with open(DIR_HTML_DOWNLOAD / f'{i}.html', encoding='utf-8', mode='w') as f:
+            with open(PATH_DIR_HTML_DOWNLOAD / f'{i}.html', encoding='utf-8', mode='w') as f:
                 f.write(f'{user_email=}\n{html_content}')
                 k = 0
                 log.info(f'Download review moodle [{url}]')

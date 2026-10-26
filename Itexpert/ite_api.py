@@ -11,7 +11,7 @@ import requests
 from requests.structures import CaseInsensitiveDict
 
 from Contact import Contact, load_contacts_from_log_file
-from Moodle.config import DIR_REPORTS, DIR_CERTS
+from Moodle.config import PATH_DIR_REPORTS, PATH_DIR_CERTS
 from Utils.log import log
 from Utils.utils import file_to_base64
 from .config import ITEXPERT_URL, ITEXPERT_API_SECRET_KEY
@@ -347,8 +347,8 @@ async def sent_report_and_cert_lk(date: datetime.datetime | None = None) -> str:
     if not contacts:
         return 'No contacts'
 
-    all_cert_files = [f for f in DIR_CERTS.rglob('*') if f.is_file() and f.suffix == '.png']
-    all_report_files = [f for f in DIR_REPORTS.rglob('*') if f.is_file() and f.suffix == '.html']
+    all_cert_files = [f for f in PATH_DIR_CERTS.rglob('*') if f.is_file() and f.suffix == '.png']
+    all_report_files = [f for f in PATH_DIR_REPORTS.rglob('*') if f.is_file() and f.suffix == '.html']
 
     ite_api = ITEXPERT_API()
 
@@ -429,8 +429,8 @@ async def sent_report_and_cert_lk(date: datetime.datetime | None = None) -> str:
 
 
 def update_cert_lk(contacts: [Contact]) -> str:
-    all_cert_files = [f for f in DIR_CERTS.rglob('*') if f.is_file() and f.suffix == '.png']
-    all_report_files = [f for f in DIR_REPORTS.rglob('*') if f.is_file() and f.suffix == '.html']
+    all_cert_files = [f for f in PATH_DIR_CERTS.rglob('*') if f.is_file() and f.suffix == '.png']
+    all_report_files = [f for f in PATH_DIR_REPORTS.rglob('*') if f.is_file() and f.suffix == '.html']
 
     ite_api = ITEXPERT_API()
 

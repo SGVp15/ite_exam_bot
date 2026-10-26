@@ -5,7 +5,7 @@ from pprint import pprint
 import dateparser
 from selectolax.lexbor import LexborHTMLParser
 
-from Moodle.config import DIR_REPORTS
+from Moodle.config import PATH_DIR_REPORTS
 
 
 def parser_report(file: Path):
@@ -43,7 +43,7 @@ def parser_report(file: Path):
     return data_return
 
 
-def parse_all_repots(path=DIR_REPORTS):
+def parse_all_repots(path=PATH_DIR_REPORTS):
     # Определяем путь к папке
     reports_dir = path
     list_return = []

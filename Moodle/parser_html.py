@@ -15,7 +15,7 @@ from Question import Question
 from Utils.log import log
 from Utils.translit import replace_ru_char_to_eng_char
 from Utils.utils import all_exception_async, all_exception
-from .config import QUESTION_INPUT_DIR_XLSX, DIR_HTML_DOWNLOAD, DIR_REPORTS
+from .config import PATH_FILE_QUESTIONS_XLSX, PATH_DIR_HTML_DOWNLOAD, PATH_DIR_REPORTS
 
 
 def parse_quiz_review(html_content: str) -> dict:
@@ -196,7 +196,7 @@ def clean_test_infp(data):
 
 
 @all_exception
-def get_all_questions_from_xlsx(dir=QUESTION_INPUT_DIR_XLSX):
+def get_all_questions_from_xlsx(dir=PATH_FILE_QUESTIONS_XLSX):
     exams_name_path = {}
     for file in dir.glob('*.xlsx'):
         exam_name = re.sub(r'.xlsx$', '', file.name)
@@ -285,14 +285,14 @@ async def generate_report(filename: Path, bank_questions):
     for k in sorted(all_category.keys()):
         print(f'{k}\t{answer_category[k]}\t{all_category[k]}')
 
-    _report_filename = DIR_REPORTS / f'r_{date_start.strftime('%Y.%m.%d')}_{test_info['test_name']}_{test_info['user']}_{filename.name}'
+    _report_filename = PATH_DIR_REPORTS / f'r_{date_start.strftime('%Y.%m.%d')}_{test_info['test_name']}_{test_info['user']}_{filename.name}'
     await create_html_page_report(test_info, all_category, answer_category, filename=_report_filename)
 
 
 @all_exception_async
 async def create_all_report(is_only_new_report=True):
-    dir_path = DIR_HTML_DOWNLOAD
-    dir_report_path = DIR_REPORTS
+    dir_path = PATH_DIR_HTML_DOWNLOAD
+    dir_report_path = PATH_DIR_REPORTS
     all_file = [filename_path for filename_path in dir_path.glob('*.html')] or []
     all_report_names = [filename_path.name for filename_path in dir_report_path.glob('*.html')] or []
 
