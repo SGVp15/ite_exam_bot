@@ -11,7 +11,7 @@ from ProctorEDU.gen_link import generate_proctoring_link
 from Utils.log import log
 from Utils.utils import all_exception_async
 from parser import get_contact_from_excel
-from root_config import LOG_FILE, ALLOWED_EXAMS, TEMPLATE_SERVER_FILE_XLSX
+from root_config import LOG_FILE, ALLOWED_EXAMS, PATH_FILE_REGISTRATION_ON_EXAM_XLSX
 
 
 def generate_new_proctoring_link_by_contact(contact):
@@ -25,7 +25,7 @@ def generate_new_proctoring_link_by_contact(contact):
 @all_exception_async
 async def server_file_registration():
     print(' ---> START [server_file_registration]')
-    contacts = get_contact_from_excel(filename=TEMPLATE_SERVER_FILE_XLSX)
+    contacts = get_contact_from_excel(filename=PATH_FILE_REGISTRATION_ON_EXAM_XLSX)
     await registration(contacts)
 
 

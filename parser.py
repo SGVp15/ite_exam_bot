@@ -5,7 +5,7 @@ import dateparser
 
 from Contact import Contact
 from EXCEL.my_excel import read_excel_file
-from root_config import TEMPLATE_FILE_XLSX, PAGE_NAME
+from root_config import PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX, PAGE_NAME
 
 
 def get_all_courses(xml: str) -> dict:
@@ -73,7 +73,7 @@ def get_contact_from_array(data_list) -> list[Contact]:
     return contacts
 
 
-def get_contact_from_excel(filename=TEMPLATE_FILE_XLSX):
+def get_contact_from_excel(filename=PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX):
     sheet_data: dict = read_excel_file(filename=filename, sheet_names=(PAGE_NAME,))
     sheet_data = sheet_data.get(PAGE_NAME)
 

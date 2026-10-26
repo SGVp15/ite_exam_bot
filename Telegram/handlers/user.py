@@ -14,7 +14,7 @@ from Telegram.main import bot, dp
 from Utils.log import log
 from main_registration import registration, send_new_link_proctoredu
 from parser import get_contact_from_excel
-from root_config import USERS_ID, ADMIN_ID, PATH_DOWNLOAD_FILE, LOG_FILE
+from root_config import USERS_ID, ADMIN_ID, PATH_DIR_DOWNLOAD_FILES_INPUT, LOG_FILE
 
 
 @dp.message(F.document & F.from_user.id.in_({*ADMIN_ID, *USERS_ID}))
@@ -26,7 +26,7 @@ async def download_document_handle(message: message):
     print(type(file))
 
     file_path = file.file_path
-    path = Path(PATH_DOWNLOAD_FILE) / file_path
+    path = Path(PATH_DIR_DOWNLOAD_FILES_INPUT) / file_path
 
     # Read the contents of the file
     await bot.download_file(file_path, destination=path)

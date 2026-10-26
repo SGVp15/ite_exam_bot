@@ -4,10 +4,10 @@ import dateparser
 from ..CertContact import CertContact
 from ..UTILS.log import log
 from ..XLSX.my_excel import read_excel_file
-from ..config_cert_exam import FILE_XLSX, SHEETNAME
+from ..config_cert_exam import PATH_FILE_CERT_XLSX, SHEETNAME
 
 
-def get_contact_from_cert_excel(filename=FILE_XLSX) -> list[CertContact]:
+def get_contact_from_cert_excel(filename=PATH_FILE_CERT_XLSX) -> list[CertContact]:
     data = read_excel_file(filename)
     rows = data.get(SHEETNAME, [])
 

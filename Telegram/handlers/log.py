@@ -11,7 +11,7 @@ from Telegram.keybords.inline import inline_kb_main
 from Telegram.main import dp, bot
 from Utils.check_time import check_time_interval
 from Utils.log import log
-from root_config import USERS_ID, ADMIN_ID, LOG_FILE, TEMPLATE_FILE_XLSX, DOCUMENTS, SYSTEM_LOG
+from root_config import USERS_ID, ADMIN_ID, LOG_FILE, PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX, PATH_DIR_DOWNLOAD_FILES_TELEGRAM, SYSTEM_LOG
 
 
 def is_empty_file(file) -> bool:
@@ -46,9 +46,9 @@ async def get_file(callback_query: types.callback_query):
     elif query == call_back.GET_LOG:
         file = FSInputFile(LOG_FILE, 'log_file.txt')
     elif query == call_back.GET_TEMPLATE_FILE_XLSX:
-        file = FSInputFile(TEMPLATE_FILE_XLSX, 'template_file.xlsx')
+        file = FSInputFile(PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX, 'template_file.xlsx')
     elif query == call_back.GET_LAST_EXCEL_FILE:
-        path_dir = Path(DOCUMENTS)
+        path_dir = Path(PATH_DIR_DOWNLOAD_FILES_TELEGRAM)
 
         # 1. Получаем список всех файлов в папке (исключая директории)
         files = [f for f in path_dir.iterdir() if f.is_file()]

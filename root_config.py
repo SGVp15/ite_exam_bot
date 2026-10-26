@@ -21,21 +21,25 @@ dir_data.mkdir(parents=True, exist_ok=True)
 
 dir_template = dir_data / 'output' / 'template'
 dir_template.mkdir(parents=True, exist_ok=True)
-TEMPLATE_FILE_XLSX = dir_template / 'template.xlsx'
+PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX = dir_template / 'template.xlsx'
+
 PAGE_NAME: str = 'Экзамены'
 
-server_dir = Path(
-    "//192.168.20.100/Administrative server/РАБОТА АДМИНИСТРАТОРА/ОРГАНИЗАЦИЯ IT ЭКЗАМЕНОВ/ЭКЗАМЕНЫ ЦИФРОВОЙ ПУТЬ/")
-TEMPLATE_SERVER_FILE_XLSX = server_dir / "Регистрация_На_Экзамен.xlsx"
+server_dir = (Path('//192.168.20.100')
+              / 'Administrative server'
+              / 'РАБОТА АДМИНИСТРАТОРА'
+              / 'ОРГАНИЗАЦИЯ IT ЭКЗАМЕНОВ'
+              / 'ЭКЗАМЕНЫ ЦИФРОВОЙ ПУТЬ')
+PATH_FILE_REGISTRATION_ON_EXAM_XLSX = server_dir / 'Регистрация_На_Экзамен.xlsx'
 
 #  == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL == EXCEL
 #  ====================================================================================================================
 
-LOG_FILE = Path(server_dir / 'log.txt')
+LOG_FILE = Path(server_dir) / 'log.txt'
 
-PATH_DOWNLOAD_FILE = dir_data / 'input'
-DOCUMENTS = PATH_DOWNLOAD_FILE / 'documents'
-DOCUMENTS.mkdir(parents=True, exist_ok=True)
+PATH_DIR_DOWNLOAD_FILES_INPUT = dir_data / 'input'
+PATH_DIR_DOWNLOAD_FILES_TELEGRAM = PATH_DIR_DOWNLOAD_FILES_INPUT / 'documents'
+PATH_DIR_DOWNLOAD_FILES_TELEGRAM.mkdir(parents=True, exist_ok=True)
 SYSTEM_LOG = dir_data / 'systemlog.txt'
 
 FONT_PATH_GEOMETRIA_LIGHT = Path('./data/fonts/Geometria/geometria_light.otf')
@@ -59,3 +63,30 @@ ALLOWED_EXAMS: list = [
     'SOAC',
     'SYSAC',
 ]
+
+paths = [
+    PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX,
+    PATH_FILE_REGISTRATION_ON_EXAM_XLSX,
+    PATH_DIR_DOWNLOAD_FILES_INPUT,
+    PATH_DIR_DOWNLOAD_FILES_TELEGRAM,
+    FONT_PATH_GEOMETRIA_LIGHT,
+    FONT_PATH_RUBIK_REGULAR,
+]
+
+def is_readable(path: Path) -> bool:
+    if not path.exists():
+        return False
+
+    try:
+        if path.is_dir():
+            next(path.iterdir(), None)  # проверяет доступ к содержимому папки
+        else:
+            with path.open('rb'):
+                pass
+        return True
+    except OSError:
+        return False
+
+
+for path in paths:
+    print(f'{path}: доступен для чтения — {is_readable(path)}')

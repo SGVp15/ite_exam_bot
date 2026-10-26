@@ -2,7 +2,7 @@ import os
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from root_config import DOCUMENTS
+from root_config import PATH_DIR_DOWNLOAD_FILES_TELEGRAM
 from Telegram.Call_Back_Data import CallBackData
 
 inline_btn_logs = InlineKeyboardButton(text='Скачать Логи', callback_data=CallBackData.DOWNLOAD_LOGS)
@@ -42,7 +42,7 @@ k_admin_menu = InlineKeyboardMarkup(inline_keyboard=[
 ])
 
 
-def get_list_files_keyboard(path=DOCUMENTS) -> [InlineKeyboardButton]:
+def get_list_files_keyboard(path=PATH_DIR_DOWNLOAD_FILES_TELEGRAM) -> [InlineKeyboardButton]:
     out_buttons = []
     files = os.listdir(path)
     for file in files:
