@@ -3,6 +3,7 @@ import re
 from asyncio import sleep
 from pathlib import Path
 from pprint import pprint
+from types import SimpleNamespace
 
 import dateparser
 from bs4 import BeautifulSoup
@@ -10,6 +11,7 @@ from bs4 import BeautifulSoup
 from EXCEL.excel_reader import get_all_questions_from_excel_file
 from Email import EmailSending
 from Email.config import EMAIL_LOGIN, EMAIL_PASSWORD, SMTP_SERVER, EMAIL_BCC, SMTP_PORT
+from Email.template import template_email_exam_result_failed
 from My_jinja import MyJinja
 from Question import Question
 from Utils.log import log
@@ -195,6 +197,51 @@ def clean_test_infp(data):
     return data
 
 
+def parse_exam_percent(grade: str) -> float | None:
+    """Return the percentage Moodle displays in its grade summary."""
+    if not grade:
+        return None
+    match = re.search(r'(-?\d+(?:[.,]\d+)?)\s*%', str(grade))
+    if not match:
+        return None
+    return float(match.group(1).replace(',', '.'))
+
+
+def send_failed_exam_notification(test_info: dict, report_path: Path) -> bool:
+    """Email exam@itexpert.ru once for each generated failing report."""
+    percent = parse_exam_percent(test_info.get('Оценка', ''))
+    if percent is None or percent >= 69 or not report_path.is_file():
+        return False
+
+    sent_marker = report_path.with_name(f'{report_path.name}.failed_notice_sent')
+    try:
+        # Exclusive creation prevents concurrent report jobs from sending twice.
+        with sent_marker.open('x', encoding='utf-8'):
+            pass
+    except FileExistsError:
+        return False
+
+    user = SimpleNamespace(
+        ru_last_name=test_info.get('user', ''),
+        ru_first_name='',
+        exam=test_info.get('test_name', '').replace(' ТЕСТ', ''),
+    )
+    try:
+        html = MyJinja(template_file=template_email_exam_result_failed).render_document(user=user)
+        EmailSending(
+            to=test_info.get('email', ''),
+            bcc=['exam@itexpert.ru'],
+            subject=f"Экзамен не сдан: {user.exam}",
+            html=html,
+            files_path=[str(report_path)],
+        ).send_email()
+    except Exception:
+        # Let a later run retry if SMTP rejected the message.
+        sent_marker.unlink(missing_ok=True)
+        raise
+    return True
+
+
 @all_exception
 def get_all_questions_from_xlsx(dir=PATH_FILE_QUESTIONS_XLSX):
     exams_name_path = {}
@@ -287,6 +334,8 @@ async def generate_report(filename: Path, bank_questions):
 
     _report_filename = PATH_DIR_REPORTS / f'r_{date_start.strftime('%Y.%m.%d')}_{test_info['test_name']}_{test_info['user']}_{filename.name}'
     await create_html_page_report(test_info, all_category, answer_category, filename=_report_filename)
+    if _report_filename.is_file():
+        send_failed_exam_notification(test_info, _report_filename)
 
 
 @all_exception_async
