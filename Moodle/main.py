@@ -34,7 +34,7 @@ async def download_reports_moodle(is_only_new=True, start_num=None):
         webdriver_moodle.driver.get(url)
         html_content = webdriver_moodle.driver.page_source
         try:
-            h1 = re.findall('<h1.*?>([\s\w]+)</h1>', html_content)
+            h1 = re.findall(r'<h1.*?>([\s\w]+)</h1>', html_content)
             if not h1:
                 k += 1
                 continue
