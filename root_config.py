@@ -73,20 +73,19 @@ paths = [
     FONT_PATH_RUBIK_REGULAR,
 ]
 
-def is_readable(path: Path) -> bool:
+def is_exist_path(path: Path) -> None:
     if not path.exists():
-        return False
+        raise FileNotFoundError(f'Путь не существует: {path}')
 
     try:
         if path.is_dir():
-            next(path.iterdir(), None)  # проверяет доступ к содержимому папки
+            next(path.iterdir(), None)
         else:
             with path.open('rb'):
                 pass
-        return True
-    except OSError:
-        return False
+    except OSError as e:
+        raise PermissionError(f'Путь недоступен для чтения: {path}') from e
 
 
 for path in paths:
-    print(f'{path}: доступен для чтения — {is_readable(path)}')
+    is_exist_path(path)
