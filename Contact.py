@@ -10,6 +10,26 @@ from Utils.utils import to_md5, clean_string
 from root_config import LOG_FILE
 
 
+def parse_online_value(value) -> bool:
+    """Convert common Excel/log representations of the online flag to bool."""
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    if isinstance(value, (int, float)):
+        if value == 1:
+            return True
+        if value == 0:
+            return False
+
+    normalized = str(value).strip().casefold()
+    if normalized in {'1', '1.0', 'да', 'д', 'yes', 'y', 'true', 'online', 'онлайн'}:
+        return True
+    if normalized in {'', '0', '0.0', 'нет', 'н', 'no', 'n', 'false', 'offline', 'офлайн'}:
+        return False
+    raise ValueError(f'Неподдерживаемое значение Online: {value!r}')
+
+
 class Contact:
     def __init__(self):
         self.name_eng: str | None = None
@@ -31,7 +51,7 @@ class Contact:
         self.remove_at: str | None = None
         self.deadline: str | None = None
         self.scheduled_at: str | None = None
-        self.online: str | None = None
+        self.online: bool | None = None
         self.subject: str | None = None
         self.url: str | None = None
 
@@ -76,7 +96,13 @@ class Contact:
                     d = dateparser.parse(v)
                     setattr(contact, attr_name, dateparser.parse(result.get(attr_name, '')))
                     continue
-                setattr(contact, attr_name, result.get(attr_name, ''))
+                value = result.get(attr_name, '')
+                if attr_name == 'online':
+                    try:
+                        value = parse_online_value(value)
+                    except ValueError:
+                        return {}
+                setattr(contact, attr_name, value)
         try:
             if not contact.url:
                 contact.url = result.get('url', '')

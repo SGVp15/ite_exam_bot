@@ -31,6 +31,9 @@ async def server_file_registration():
 
 @all_exception_async
 async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
+    if not contacts:
+        return 'В файле нет заявок.'
+
     contacts = contacts[:]
     out_str = ''
     exams = [contact.exam for contact in contacts]
@@ -47,8 +50,26 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
     await sleep(0.1)
     # -------------- Moodle --------------
     moodle_api = MoodleApi()
+    successful_contacts = []
+    failed_contacts = []
     for contact in new_contacts:
-        moodle_api.process_user_and_enrollment(contact=contact)
+        try:
+            moodle_success = moodle_api.process_user_and_enrollment(contact=contact)
+        except Exception as e:
+            log.error(f'Moodle registration failed for {contact.email}: {e}')
+            moodle_success = False
+
+        if moodle_success:
+            successful_contacts.append(contact)
+        else:
+            contact.status = 'Moodle error'
+            failed_contacts.append(contact)
+            log.error(f'Moodle registration failed for {contact.email}')
+
+    new_contacts = successful_contacts
+    if not new_contacts:
+        failed_emails = ', '.join(contact.email for contact in failed_contacts)
+        return f'Не удалось зарегистрировать пользователей в Moodle: {failed_emails}'
 
     await sleep(0.1)
     # -------------- ProctorEDU --------------
@@ -89,7 +110,11 @@ async def registration(contacts: [Contact], send_to_itexpert=True) -> str:
             ite_api.create_exam(contact)
 
     # OUT STRING
+    for contact in failed_contacts:
+        out_str += f'[Ошибка Moodle] {contact.ru_last_name} {contact.ru_first_name} {contact.email}\n'
     for contact in contacts:
+        if contact in failed_contacts:
+            continue
         out_str += (f'{contact.ru_last_name} {contact.ru_first_name} '
                     f'{contact.email} {contact.exam} {contact.date_exam}\n')
     return out_str

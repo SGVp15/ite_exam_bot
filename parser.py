@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 import dateparser
 
-from Contact import Contact
+from Contact import Contact, parse_online_value
 from EXCEL.my_excel import read_excel_file
 from root_config import PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX, PAGE_NAME
 
@@ -59,7 +59,7 @@ def get_contact_from_array(data_list) -> list[Contact]:
         contact.email = email
         contact.password = password
         contact.exam = exam
-        contact.online = online
+        contact.online = parse_online_value(online)
         contact.date_exam = dateparser.parse(
             f'{exam_date.strip()} {str(hours).strip()}:{str(minutes).strip()}',
             settings={'DATE_ORDER': 'DMY'}
@@ -79,5 +79,5 @@ def get_contact_from_excel(filename=PATH_FILE_TEMPLATE_REGISTRATION_ON_EXAM_XLSX
 
     contacts: list[Contact] = get_contact_from_array(sheet_data)
     if not contacts:
-        return None
+        return []
     return contacts
